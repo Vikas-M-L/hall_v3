@@ -1,0 +1,25 @@
+torch>=2.1.0
+transformers>=4.49.0        # Qwen2.5-VL support landed in 4.49
+accelerate>=0.30.0          # required by device_map="auto"
+bitsandbytes>=0.43.0        # 4-bit quantization for Colab-class memory
+
+pillow>=10.0.0
+numpy>=1.24.0
+pyyaml>=6.0
+
+# Test runner. tests/test_fusion.py also runs standalone (`python tests/test_fusion.py`)
+# with nothing but numpy, so this is only needed for `pytest -v`.
+pytest>=7.4.0
+
+# Optional: only needed if clip.backend == "open_clip"
+# open_clip_torch>=2.24.0
+
+# Deliberately absent:
+#   torchvision      - nothing here imports it; the CLIP processors do their own
+#                      preprocessing. open_clip pulls it in if you enable that
+#                      backend.
+#   qwen-vl-utils    - only needed for process_vision_info(), which this repo does
+#                      not use: images are passed to AutoProcessor directly so that
+#                      min_pixels/max_pixels stay pinned and visual-token counts
+#                      stay comparable across calls.
+#   tqdm             - no progress bars; the runner logs per image instead.

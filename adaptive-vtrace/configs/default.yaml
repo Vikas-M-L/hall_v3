@@ -1,0 +1,149 @@
+# Adaptive V-TRACE+ — default configuration
+# Every run is one config file. Nothing below should be hardcoded elsewhere.
+
+seed: 42
+device: cuda
+dtype: bfloat16
+
+paths:
+  raw_data: data/raw
+  processed_data: data/processed
+  cache_dir: data/cache          # extracted features are cached here, keyed by claim id
+  results_dir: results
+  null_image_pool: data/raw/null_pool   # random unrelated images for the VIG expectation
+
+# ---------------------------------------------------------------- models
+vlm:
+  checkpoint: Qwen/Qwen2.5-VL-7B-Instruct
+  load_in_4bit: true             # set false if you have >=24GB and want speed
+  # Cap visual tokens. 1280 * 28 * 28 keeps sequences short enough for prefix caching
+  # to matter, and keeps token counts stable across null-image variants.
+  min_pixels: 200704             # 256 * 28 * 28
+  max_pixels: 1003520            # 1280 * 28 * 28
+  max_new_tokens: 256
+  temperature: 0.0               # greedy for the primary generation
+  attn_implementation: sdpa      # "flash_attention_2" if installed
+
+clip:
+  backend: transformers          # "transformers" | "open_clip"
+  checkpoint: openai/clip-vit-large-patch14
+  # SigLIP alternative: google/siglip-so400m-patch14-384 (set backend: transformers)
+
+grounding:
+  backend: attention_rollout     # "groundingdino" | "attention_rollout"
+  groundingdino_checkpoint: IDEA-Research/grounding-dino-base
+  box_threshold: 0.25
+  text_threshold: 0.20
+  n_region_proposals: 8          # used by the attention-rollout fallback
+
+uniprobe:
+  checkpoint: null               # HF repo id if the official release is available
+  substitute:
+    enabled: true                # used automatically when checkpoint is null/unloadable
+    layer: -12                   # mid-to-late layer hidden states
+    hidden_dim: 64
+    trained_weights: null        # path to a probe trained by scripts/train_probe.py
+
+cf_detect:
+  # Counterfactual-Hallucination-Detect
+  checkpoint: null               # HF repo id; falls back to internal counterfactual module
+  enabled: true
+
+claim_extractor:
+  backend: vlm                   # "vlm" (reuse Qwen text head) | "hf_llm"
+  hf_llm_checkpoint: Qwen/Qwen2.5-7B-Instruct
+  max_claims: 20
+  type_taxonomy: [object, attribute, count, spatial, relation, action, ocr, scene]
+
+# ---------------------------------------------------------------- signals
+signals:
+  # Toggle any signal off here; the feature builder and ablation runner both respect it.
+  evidence_grounding: true
+  vlm_confidence: true
+  ced: true                      # NOTE: exactly collinear with the two above for linear models
+  uniprobe: true
+  counterfactual: true
+  cf_detect: true
+  clip_similarity: true
+  claim_type: true
+  claim_length: true
+  cross_detector_disagreement: true
+  # --- additions from the reframed plan; cheap, computed in the same passes ---
+  vig: true                      # visual information gain
+  prior_term: true               # log E[P(claim | null image)] — M1's real discriminator
+  self_consistency: true         # sampling-based, independent of the probe
+
+vig:
+  null_construction: random_images   # random_images | gaussian_noise | grey | token_removal
+  n_null_samples: 4
+  # Correct PMI estimator is logsumexp(log p_i) - log N, NOT mean(log p_i).
+  # Setting this false reproduces the biased estimator for the ablation.
+  use_logsumexp: true
+  per_token: true                # also store length-normalized VIG
+  scoring_template: "Describe what you see. {claim}"   # PREREGISTER this string
+
+self_consistency:
+  n_samples: 5
+  temperature: 0.7
+  agreement: embedding           # "embedding" | "nli"
+
+counterfactual:
+  mask_mode: blur                # blur | grey | noise
+  blur_radius: 25
+  n_control_regions: 1           # a control mask, for the binding-error signature
+
+# ---------------------------------------------------------------- fusion
+fusion:
+  mode: adaptive                 # fixed_equal | fixed_learned | adaptive | unconstrained | two_stage
+  # fixed_equal      -> ladder rung 2
+  # fixed_learned    -> ladder rung 3
+  # unconstrained    -> ladder rung 4 (no simplex constraint; prices interpretability)
+  # adaptive         -> softmax-weight gating (the original V-TRACE+ design)
+  # two_stage        -> detection head + mechanism head with an explicit M0 no-op
+  model: mlp                     # logreg | xgboost | mlp
+  scaler: standard               # standard | minmax | none  (fit on train split only)
+
+gate_mlp:
+  hidden: [32, 16]
+  dropout: 0.1
+
+train:
+  epochs: 100
+  batch_size: 64
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  early_stop_patience: 10
+  lambda_calibration: 0.1
+  lambda_consistency: 0.05
+
+xgboost:
+  n_estimators: 300
+  max_depth: 4
+  learning_rate: 0.05
+  subsample: 0.8
+  colsample_bytree: 0.8
+
+two_stage:
+  mechanisms: [M0, M1, M2, M3]   # no_fault, prior_override, perceptual, unsurfaced_uncertainty
+  detection_model: xgboost
+  mechanism_model: xgboost
+  out_of_fold_probe_features: true   # prevents probe leakage into the mechanism head
+
+# ---------------------------------------------------------------- eval
+aggregation:
+  method: max                    # max | topk_mean | learned
+  topk: 3
+
+eval:
+  threshold: 0.5
+  ece_bins: 15
+  breakdown_by_claim_type: true
+  bootstrap_n: 1000              # paired bootstrap CIs; deltas here will be small
+
+data:
+  benchmark: pope                # pope | amber | mhaldetect | vhilt | custom
+  splits: [0.70, 0.15, 0.15]
+  leakage_check: true
+  # Restricting to single-claim responses makes repair well-defined and verification
+  # near-exact. Set false for free-form captioning (diagnostic results only).
+  single_claim_only: false

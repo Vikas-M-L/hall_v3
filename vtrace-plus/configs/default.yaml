@@ -1,0 +1,95 @@
+# V-TRACE+ — inference-only configuration
+#
+# Every model here is frozen. There is no training loop, no dataset split, and
+# no fitted parameter anywhere in this repo. The fusion weights in v2 mode are
+# computed deterministically from signal values at inference time.
+
+device: cuda
+dtype: bfloat16
+seed: 42
+
+# ------------------------------------------------------------------- fusion
+# v1 -> fixed equal-weight average over active signals
+# v2 -> rule-based adaptive weighting (deterministic; see fusion/vtrace_fusion.py)
+fusion_mode: v2
+
+# Which signals participate. Turning one off removes it from the weighting and
+# the remaining weights renormalize — no code change needed.
+signals:
+  confidence: true
+  evidence: true            # CLIP claim-vs-region grounding
+  clip_similarity: true     # CLIP claim-vs-whole-image
+  uniprobe: true            # STUBBED until the real API is confirmed
+  counterfactual: true      # runs locally by default; see counterfactual.mode
+
+# A signal running in placeholder mode returns the same constant for every claim,
+# so it carries no information and only pulls every score toward that constant.
+# With this true, such signals are dropped and the remaining weights renormalize.
+drop_stubbed: true
+
+# Prompt used to elicit the response that gets decomposed into claims.
+prompt: "Describe this image in detail."
+
+# ------------------------------------------------------------------- models
+vlm:
+  checkpoint: Qwen/Qwen2.5-VL-7B-Instruct
+  load_in_4bit: true
+  min_pixels: 200704        # 256 * 28 * 28
+  max_pixels: 1003520       # 1280 * 28 * 28
+  max_new_tokens: 256
+  temperature: 0.0
+  attn_implementation: sdpa
+
+clip:
+  backend: transformers     # "transformers" | "open_clip"
+  checkpoint: openai/clip-vit-large-patch14
+  # SigLIP alternative: google/siglip-so400m-patch14-384
+  region_grid: 3            # 3x3 grid crops + full image as region proposals
+  region_overlap: 0.2
+  # ---------------------------------------------------------------------
+  # CALIBRATE THESE ON RUN 1. Raw CLIP cosines occupy a narrow band (~0.15-0.35
+  # for ViT-L/14), not [-1, 1]. This window maps that band to [0, 1]; get it
+  # wrong and `evidence` / `clip_similarity` become near-constant, which also
+  # makes CED — and therefore all of v2 — meaningless. The run summary prints
+  # the observed min/median/max; set these from it, then revisit CED_THRESHOLD
+  # in fusion/vtrace_fusion.py. THE VALUES BELOW ARE A GUESS.
+  cos_min: 0.10
+  cos_max: 0.40
+
+uniprobe:
+  # TODO: fill in once the real repo is confirmed. UniProbe is a recent release;
+  # do not guess the call signature. See models/uniprobe_wrapper.py.
+  mode: placeholder         # placeholder | logprob_dispersion | model
+  checkpoint: null
+  layer: -12
+  placeholder_value: 0.5    # returned while the model is unwired
+  dispersion_scale: 2.0     # only used by the logprob_dispersion stand-in
+
+counterfactual:
+  # `local` needs no external model: it masks the best-matching region and
+  # re-scores the claim with the VLM already loaded. Costs 2 extra forward
+  # passes per claim. Switch to `model` only after confirming the real repo ID —
+  # the name "Counterfactual-Hallucination-Detect" could not be verified.
+  mode: local               # placeholder | local | model
+  checkpoint: null
+  mask_mode: blur           # blur | grey | noise
+  blur_radius: 25
+  placeholder_value: 0.5    # returned in placeholder mode
+  # Nats of mean-log-prob change treated as "strong dependence on this region".
+  # ALSO A GUESS — the run summary prints the observed delta spread; set this
+  # near the reported p90|delta|. See models/counterfactual_wrapper.py.
+  delta_scale: 0.05
+
+claim_extractor:
+  backend: vlm              # reuse the loaded Qwen text head
+  max_claims: 20
+  type_taxonomy: [object, attribute, count, spatial, relation, action, ocr, scene]
+
+# -------------------------------------------------------------- aggregation
+aggregation:
+  method: max               # max | topk_mean | mean
+  topk: 3
+
+output:
+  results_dir: results
+  save_explanations: true

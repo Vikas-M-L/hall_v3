@@ -1,0 +1,30 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# outputs
+results/
+*.json
+!configs/*.json
+
+# model + data caches
+.cache/
+checkpoints/
+*.pt
+*.pth
+*.safetensors
+data/
+images/
+
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store
+.idea/
+.vscode/
+
+# secrets — never commit API keys
+.env
+.env.*
