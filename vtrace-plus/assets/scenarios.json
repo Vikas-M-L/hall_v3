@@ -1,0 +1,44 @@
+[
+  {"id": "presence", "title": "Object presence", "image": "coco_cats.jpg",
+   "blurb": "Is the claimed object actually there?",
+   "claims": [
+     {"text": "There is a cat.", "expected": "grounded"},
+     {"text": "There is a dog.", "expected": "hallucinated",
+      "correction": "No dog present — the animals are cats."}]},
+  {"id": "absence", "title": "Object absence", "image": "coco_nocat1.jpg",
+   "blurb": "True denials must score low; false sightings must score high.",
+   "claims": [
+     {"text": "There is no cat.", "expected": "grounded"},
+     {"text": "There is a cat.", "expected": "hallucinated",
+      "correction": "No cat in this image (POPE label: no)."}]},
+  {"id": "count", "title": "Counting", "image": "coco_cats.jpg",
+   "blurb": "CLIP is number-blind — the OWL-ViT counter decides (3 cats).",
+   "claims": [
+     {"text": "There are 3 cats.", "expected": "grounded"},
+     {"text": "There are 2 dogs.", "expected": "hallucinated",
+      "correction": "0 dogs; OWL-ViT counts 3 cats."}]},
+  {"id": "attribute", "title": "Attribute", "image": "red_square.jpg",
+   "blurb": "Right object, wrong property.",
+   "claims": [
+     {"text": "The square is red.", "expected": "grounded"},
+     {"text": "The square is blue.", "expected": "hallucinated",
+      "correction": "The square is red, not blue."}]},
+  {"id": "localize", "title": "Localization", "image": "half_red_blue.jpg",
+   "blurb": "Which half matches? The ROI box must land left for red.",
+   "claims": [
+     {"text": "The left half is red.", "expected": "grounded"},
+     {"text": "The whole square is blue.", "expected": "hallucinated",
+      "correction": "Only the right half is blue; the left is red."}]},
+  {"id": "negation", "title": "Negation", "image": "red_square.jpg",
+   "blurb": "CLIP matches 'no X' to X — the negation rule inverts it.",
+   "claims": [
+     {"text": "There is no blue elephant.", "expected": "grounded"},
+     {"text": "There is no red square.", "expected": "hallucinated",
+      "correction": "There IS a red square — the denial is false."}]},
+  {"id": "absence2", "title": "Absence, second scene", "image": "coco_nocat2.jpg",
+   "blurb": "Same test, unseen photo — checks it is not a one-image trick.",
+   "claims": [
+     {"text": "There is no cat.", "expected": "grounded"},
+     {"text": "There is a cat.", "expected": "hallucinated",
+      "correction": "No cat in this image (POPE label: no)."}]}
+]

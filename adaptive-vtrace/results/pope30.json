@@ -1,0 +1,454 @@
+{
+  "siglip-whole": {
+    "random": {
+      "n": 10,
+      "auroc": 0.88,
+      "auprc": 0.9028571428571428,
+      "auroc_ci95": [
+        0.583,
+        1.0
+      ],
+      "f1": 0.8,
+      "precision": 0.8,
+      "recall": 0.8,
+      "accuracy": 0.8,
+      "threshold": 0.5
+    },
+    "popular": {
+      "n": 10,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "auroc_ci95": [
+        1.0,
+        1.0
+      ],
+      "f1": 0.9090909090909091,
+      "precision": 0.8333333333333334,
+      "recall": 1.0,
+      "accuracy": 0.9,
+      "threshold": 0.5
+    },
+    "adversarial": {
+      "n": 10,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "auroc_ci95": [
+        1.0,
+        1.0
+      ],
+      "f1": 0.9090909090909091,
+      "precision": 0.8333333333333334,
+      "recall": 1.0,
+      "accuracy": 0.9,
+      "threshold": 0.5
+    },
+    "all": {
+      "n": 30,
+      "auroc": 0.96,
+      "auprc": 0.9691876750700279,
+      "auroc_ci95": [
+        0.875,
+        1.0
+      ],
+      "f1": 0.875,
+      "precision": 0.8235294117647058,
+      "recall": 0.9333333333333333,
+      "accuracy": 0.8666666666666667,
+      "threshold": 0.5
+    }
+  },
+  "clipB32-grid": {
+    "random": {
+      "n": 10,
+      "auroc": 0.8800000000000001,
+      "auprc": 0.8766666666666667,
+      "auroc_ci95": [
+        0.5,
+        1.0
+      ],
+      "f1": 0.6666666666666666,
+      "precision": 0.75,
+      "recall": 0.6,
+      "accuracy": 0.7,
+      "threshold": 0.5
+    },
+    "popular": {
+      "n": 10,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "auroc_ci95": [
+        1.0,
+        1.0
+      ],
+      "f1": 0.9090909090909091,
+      "precision": 0.8333333333333334,
+      "recall": 1.0,
+      "accuracy": 0.9,
+      "threshold": 0.5
+    },
+    "adversarial": {
+      "n": 10,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "auroc_ci95": [
+        1.0,
+        1.0
+      ],
+      "f1": 0.9090909090909091,
+      "precision": 0.8333333333333334,
+      "recall": 1.0,
+      "accuracy": 0.9,
+      "threshold": 0.5
+    },
+    "all": {
+      "n": 30,
+      "auroc": 0.9600000000000001,
+      "auprc": 0.964624183006536,
+      "auroc_ci95": [
+        0.882,
+        1.0
+      ],
+      "f1": 0.8387096774193549,
+      "precision": 0.8125,
+      "recall": 0.8666666666666667,
+      "accuracy": 0.8333333333333334,
+      "threshold": 0.5
+    }
+  },
+  "chance": {
+    "random": {
+      "n": 10,
+      "auroc": 0.5,
+      "auprc": 0.5,
+      "auroc_ci95": [
+        0.5,
+        0.5
+      ],
+      "f1": 0.6666666666666666,
+      "precision": 0.5,
+      "recall": 1.0,
+      "accuracy": 0.5,
+      "threshold": 0.5
+    },
+    "popular": {
+      "n": 10,
+      "auroc": 0.5,
+      "auprc": 0.5,
+      "auroc_ci95": [
+        0.5,
+        0.5
+      ],
+      "f1": 0.6666666666666666,
+      "precision": 0.5,
+      "recall": 1.0,
+      "accuracy": 0.5,
+      "threshold": 0.5
+    },
+    "adversarial": {
+      "n": 10,
+      "auroc": 0.5,
+      "auprc": 0.5,
+      "auroc_ci95": [
+        0.5,
+        0.5
+      ],
+      "f1": 0.6666666666666666,
+      "precision": 0.5,
+      "recall": 1.0,
+      "accuracy": 0.5,
+      "threshold": 0.5
+    },
+    "all": {
+      "n": 30,
+      "auroc": 0.5,
+      "auprc": 0.5,
+      "auroc_ci95": [
+        0.5,
+        0.5
+      ],
+      "f1": 0.6666666666666666,
+      "precision": 0.5,
+      "recall": 1.0,
+      "accuracy": 0.5,
+      "threshold": 0.5
+    }
+  },
+  "_meta": {
+    "n_per_split": 10,
+    "seed": 2,
+    "seconds": 208.4,
+    "note": "claims parsed from POPE questions; no VLM responses (needs API key/GPU). y_hall=1 when POPE answer is no."
+  },
+  "_claims": [
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000307166",
+      "claim": "a sink",
+      "y_hall": 1,
+      "siglip-whole": 0.45728538219224324,
+      "clipB32-grid": 0.47224852442741383,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000105732",
+      "claim": "a book",
+      "y_hall": 1,
+      "siglip-whole": 0.8387419771064412,
+      "clipB32-grid": 0.7118471264839172,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000500257",
+      "claim": "a backpack",
+      "y_hall": 0,
+      "siglip-whole": 0.48029287667437026,
+      "clipB32-grid": 0.4559924006462096,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000230175",
+      "claim": "a tie",
+      "y_hall": 0,
+      "siglip-whole": 0.4351027770475907,
+      "clipB32-grid": 0.43442803621292103,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000307166",
+      "claim": "a pizza",
+      "y_hall": 0,
+      "siglip-whole": 0.17449328709732403,
+      "clipB32-grid": 0.25695133209228505,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000463522",
+      "claim": "a clock",
+      "y_hall": 1,
+      "siglip-whole": 0.6753802675415168,
+      "clipB32-grid": 0.522958442568779,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000528136",
+      "claim": "a person",
+      "y_hall": 0,
+      "siglip-whole": 0.5327496037564494,
+      "clipB32-grid": 0.43232786655426014,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000237767",
+      "claim": "a traffic light",
+      "y_hall": 1,
+      "siglip-whole": 0.7458218241279775,
+      "clipB32-grid": 0.6590711623430252,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000217397",
+      "claim": "a wine glass",
+      "y_hall": 0,
+      "siglip-whole": 0.3405179950323972,
+      "clipB32-grid": 0.5425993651151657,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000041180",
+      "claim": "a bear",
+      "y_hall": 1,
+      "siglip-whole": 0.5091736045750704,
+      "clipB32-grid": 0.4885006248950957,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000307166",
+      "claim": "a person",
+      "y_hall": 1,
+      "siglip-whole": 0.8817739229310643,
+      "clipB32-grid": 0.5689905136823654,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000105732",
+      "claim": "a dining table",
+      "y_hall": 1,
+      "siglip-whole": 0.6704108064824884,
+      "clipB32-grid": 0.6743795722723007,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000500257",
+      "claim": "a backpack",
+      "y_hall": 0,
+      "siglip-whole": 0.48029287667437026,
+      "clipB32-grid": 0.4559924006462096,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000230175",
+      "claim": "a tie",
+      "y_hall": 0,
+      "siglip-whole": 0.4351027770475907,
+      "clipB32-grid": 0.43442803621292103,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000307166",
+      "claim": "a pizza",
+      "y_hall": 0,
+      "siglip-whole": 0.17449328709732403,
+      "clipB32-grid": 0.25695133209228505,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000463522",
+      "claim": "a dining table",
+      "y_hall": 1,
+      "siglip-whole": 0.6622330407527359,
+      "clipB32-grid": 0.6006743311882019,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000528136",
+      "claim": "a person",
+      "y_hall": 0,
+      "siglip-whole": 0.5327496037564494,
+      "clipB32-grid": 0.43232786655426014,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000237767",
+      "claim": "a cup",
+      "y_hall": 1,
+      "siglip-whole": 0.6404489739374681,
+      "clipB32-grid": 0.5772801041603088,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000217397",
+      "claim": "a wine glass",
+      "y_hall": 0,
+      "siglip-whole": 0.3405179950323972,
+      "clipB32-grid": 0.5425993651151657,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000041180",
+      "claim": "a dining table",
+      "y_hall": 1,
+      "siglip-whole": 0.6977857297117059,
+      "clipB32-grid": 0.6401843130588531,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000307166",
+      "claim": "a person",
+      "y_hall": 1,
+      "siglip-whole": 0.8817739229310643,
+      "clipB32-grid": 0.5689905136823654,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000105732",
+      "claim": "a handbag",
+      "y_hall": 1,
+      "siglip-whole": 0.7912103547291323,
+      "clipB32-grid": 0.6581232994794846,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000500257",
+      "claim": "a backpack",
+      "y_hall": 0,
+      "siglip-whole": 0.48029287667437026,
+      "clipB32-grid": 0.4559924006462096,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000230175",
+      "claim": "a tie",
+      "y_hall": 0,
+      "siglip-whole": 0.4351027770475907,
+      "clipB32-grid": 0.43442803621292103,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000307166",
+      "claim": "a pizza",
+      "y_hall": 0,
+      "siglip-whole": 0.17449328709732403,
+      "clipB32-grid": 0.25695133209228505,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000463522",
+      "claim": "a handbag",
+      "y_hall": 1,
+      "siglip-whole": 0.6097844669764692,
+      "clipB32-grid": 0.5509744137525558,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000528136",
+      "claim": "a person",
+      "y_hall": 0,
+      "siglip-whole": 0.5327496037564494,
+      "clipB32-grid": 0.43232786655426014,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000237767",
+      "claim": "a cup",
+      "y_hall": 1,
+      "siglip-whole": 0.6404489739374681,
+      "clipB32-grid": 0.5772801041603088,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000217397",
+      "claim": "a wine glass",
+      "y_hall": 0,
+      "siglip-whole": 0.3405179950323972,
+      "clipB32-grid": 0.5425993651151657,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000041180",
+      "claim": "a handbag",
+      "y_hall": 1,
+      "siglip-whole": 0.6777608719739047,
+      "clipB32-grid": 0.6039893925189972,
+      "chance": 0.5
+    }
+  ]
+}

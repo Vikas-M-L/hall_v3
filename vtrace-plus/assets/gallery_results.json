@@ -1,0 +1,314 @@
+[
+ {
+  "id": "presence",
+  "title": "Object presence",
+  "image": "coco_cats.jpg",
+  "blurb": "Is the claimed object actually there?",
+  "claims": [
+   {
+    "text": "There is a cat.",
+    "expected": "grounded"
+   },
+   {
+    "text": "There is a dog.",
+    "expected": "hallucinated",
+    "correction": "No dog present \u2014 the animals are cats."
+   }
+  ],
+  "results": [
+   {
+    "text": "There is a cat.",
+    "risk": 0.19,
+    "verdict": "grounded",
+    "expected": "grounded",
+    "correct": true,
+    "correction": "",
+    "rules": [
+     "v1: fixed equal weights"
+    ],
+    "whole_won": false
+   },
+   {
+    "text": "There is a dog.",
+    "risk": 0.287,
+    "verdict": "grounded",
+    "expected": "hallucinated",
+    "correct": false,
+    "correction": "No dog present \u2014 the animals are cats.",
+    "rules": [
+     "v1: fixed equal weights"
+    ],
+    "whole_won": false
+   }
+  ],
+  "pairwise_ok": true
+ },
+ {
+  "id": "absence",
+  "title": "Object absence",
+  "image": "coco_nocat1.jpg",
+  "blurb": "True denials must score low; false sightings must score high.",
+  "claims": [
+   {
+    "text": "There is no cat.",
+    "expected": "grounded"
+   },
+   {
+    "text": "There is a cat.",
+    "expected": "hallucinated",
+    "correction": "No cat in this image (POPE label: no)."
+   }
+  ],
+  "results": [
+   {
+    "text": "There is no cat.",
+    "risk": 0.598,
+    "verdict": "uncertain",
+    "expected": "grounded",
+    "correct": false,
+    "correction": "",
+    "rules": [
+     "v1: fixed equal weights",
+     "negation-inverted"
+    ],
+    "whole_won": false
+   },
+   {
+    "text": "There is a cat.",
+    "risk": 0.418,
+    "verdict": "uncertain",
+    "expected": "hallucinated",
+    "correct": false,
+    "correction": "No cat in this image (POPE label: no).",
+    "rules": [
+     "v1: fixed equal weights"
+    ],
+    "whole_won": false
+   }
+  ],
+  "pairwise_ok": false
+ },
+ {
+  "id": "count",
+  "title": "Counting",
+  "image": "coco_cats.jpg",
+  "blurb": "CLIP is number-blind \u2014 the OWL-ViT counter decides (3 cats).",
+  "claims": [
+   {
+    "text": "There are 3 cats.",
+    "expected": "grounded"
+   },
+   {
+    "text": "There are 2 dogs.",
+    "expected": "hallucinated",
+    "correction": "0 dogs; OWL-ViT counts 3 cats."
+   }
+  ],
+  "results": [
+   {
+    "text": "There are 3 cats.",
+    "risk": 0.055,
+    "verdict": "grounded",
+    "expected": "grounded",
+    "correct": true,
+    "correction": "",
+    "rules": [
+     "v1: fixed equal weights"
+    ],
+    "whole_won": true
+   },
+   {
+    "text": "There are 2 dogs.",
+    "risk": 0.196,
+    "verdict": "grounded",
+    "expected": "hallucinated",
+    "correct": false,
+    "correction": "0 dogs; OWL-ViT counts 3 cats.",
+    "rules": [
+     "v1: fixed equal weights"
+    ],
+    "whole_won": false
+   }
+  ],
+  "pairwise_ok": true
+ },
+ {
+  "id": "attribute",
+  "title": "Attribute",
+  "image": "red_square.jpg",
+  "blurb": "Right object, wrong property.",
+  "claims": [
+   {
+    "text": "The square is red.",
+    "expected": "grounded"
+   },
+   {
+    "text": "The square is blue.",
+    "expected": "hallucinated",
+    "correction": "The square is red, not blue."
+   }
+  ],
+  "results": [
+   {
+    "text": "The square is red.",
+    "risk": 0.075,
+    "verdict": "grounded",
+    "expected": "grounded",
+    "correct": true,
+    "correction": "",
+    "rules": [
+     "v1: fixed equal weights"
+    ],
+    "whole_won": true
+   },
+   {
+    "text": "The square is blue.",
+    "risk": 0.493,
+    "verdict": "uncertain",
+    "expected": "hallucinated",
+    "correct": false,
+    "correction": "The square is red, not blue.",
+    "rules": [
+     "v1: fixed equal weights"
+    ],
+    "whole_won": true
+   }
+  ],
+  "pairwise_ok": true
+ },
+ {
+  "id": "localize",
+  "title": "Localization",
+  "image": "half_red_blue.jpg",
+  "blurb": "Which half matches? The ROI box must land left for red.",
+  "claims": [
+   {
+    "text": "The left half is red.",
+    "expected": "grounded"
+   },
+   {
+    "text": "The whole square is blue.",
+    "expected": "hallucinated",
+    "correction": "Only the right half is blue; the left is red."
+   }
+  ],
+  "results": [
+   {
+    "text": "The left half is red.",
+    "risk": 0.027,
+    "verdict": "grounded",
+    "expected": "grounded",
+    "correct": true,
+    "correction": "",
+    "rules": [
+     "v1: fixed equal weights"
+    ],
+    "whole_won": true
+   },
+   {
+    "text": "The whole square is blue.",
+    "risk": 0.178,
+    "verdict": "grounded",
+    "expected": "hallucinated",
+    "correct": false,
+    "correction": "Only the right half is blue; the left is red.",
+    "rules": [
+     "v1: fixed equal weights"
+    ],
+    "whole_won": false
+   }
+  ],
+  "pairwise_ok": true
+ },
+ {
+  "id": "negation",
+  "title": "Negation",
+  "image": "red_square.jpg",
+  "blurb": "CLIP matches 'no X' to X \u2014 the negation rule inverts it.",
+  "claims": [
+   {
+    "text": "There is no blue elephant.",
+    "expected": "grounded"
+   },
+   {
+    "text": "There is no red square.",
+    "expected": "hallucinated",
+    "correction": "There IS a red square \u2014 the denial is false."
+   }
+  ],
+  "results": [
+   {
+    "text": "There is no blue elephant.",
+    "risk": 0.228,
+    "verdict": "grounded",
+    "expected": "grounded",
+    "correct": true,
+    "correction": "",
+    "rules": [
+     "v1: fixed equal weights",
+     "negation-inverted"
+    ],
+    "whole_won": true
+   },
+   {
+    "text": "There is no red square.",
+    "risk": 0.638,
+    "verdict": "hallucinated",
+    "expected": "hallucinated",
+    "correct": true,
+    "correction": "There IS a red square \u2014 the denial is false.",
+    "rules": [
+     "v1: fixed equal weights",
+     "negation-inverted"
+    ],
+    "whole_won": true
+   }
+  ],
+  "pairwise_ok": true
+ },
+ {
+  "id": "absence2",
+  "title": "Absence, second scene",
+  "image": "coco_nocat2.jpg",
+  "blurb": "Same test, unseen photo \u2014 checks it is not a one-image trick.",
+  "claims": [
+   {
+    "text": "There is no cat.",
+    "expected": "grounded"
+   },
+   {
+    "text": "There is a cat.",
+    "expected": "hallucinated",
+    "correction": "No cat in this image (POPE label: no)."
+   }
+  ],
+  "results": [
+   {
+    "text": "There is no cat.",
+    "risk": 0.464,
+    "verdict": "uncertain",
+    "expected": "grounded",
+    "correct": false,
+    "correction": "",
+    "rules": [
+     "v1: fixed equal weights",
+     "negation-inverted"
+    ],
+    "whole_won": false
+   },
+   {
+    "text": "There is a cat.",
+    "risk": 0.539,
+    "verdict": "uncertain",
+    "expected": "hallucinated",
+    "correct": false,
+    "correction": "No cat in this image (POPE label: no).",
+    "rules": [
+     "v1: fixed equal weights"
+    ],
+    "whole_won": false
+   }
+  ],
+  "pairwise_ok": true
+ }
+]
