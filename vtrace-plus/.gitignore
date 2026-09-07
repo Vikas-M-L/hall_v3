@@ -16,6 +16,7 @@ checkpoints/
 *.pt
 *.pth
 *.safetensors
+*.joblib
 data/
 images/
 

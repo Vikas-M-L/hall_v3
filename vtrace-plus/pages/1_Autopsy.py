@@ -61,12 +61,18 @@ st.markdown(f"<div class='card'><b style='font-size:18px'>{claim_text}</b><br>"
             f"<div class='risk-bar'><div class='risk-fill' style='width:{pct}%;"
             f"background:{L.bar_of(risk)}'></div></div></div>", unsafe_allow_html=True)
 
-# 2 — evidence table
+# 2 — evidence table (numbers only; dicts/lists render below, never formatted)
 st.subheader("Evidence")
-rows = [(k, ("—" if v is None or v != v else f"{v:.3f}"))
-        for k, v in ev.items() if k not in ("rules", "diagnosis")]
-st.table([{"signal": k, "value": v} for k, v in rows
-          if not isinstance(v, (dict, list))])
+
+
+def _num(v):
+    return isinstance(v, (int, float)) and v == v
+
+
+rows = [{"signal": k, "value": f"{v:.3f}"}
+        for k, v in ev.items()
+        if k not in ("rules", "diagnosis", "count", "vlm") and _num(v)]
+st.table(rows)
 if ev.get("rules"):
     st.caption("Rules fired: " + ", ".join(ev["rules"]))
 if ev.get("count"):
