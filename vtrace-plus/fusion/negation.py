@@ -28,6 +28,55 @@ def has_negation(claim: str) -> bool:
     return bool(NEG_PATTERN.search(claim or ""))
 
 
+HEDGE_PATTERN = re.compile(
+    r"\b(maybe|perhaps|possibly|probably|appears?|seems?|looks?\s+like|"
+    r"might|could\s+be|suggests?|likely|uncertain)\b",
+    re.IGNORECASE,
+)
+
+# Leading-negation strippers, ordered most-specific first. Each turns a denied
+# claim into its positive counterclaim for pairwise scoring.
+_NEG_STRIP_RES = [
+    re.compile(r"^\s*there\s+is\s+no\s+(?P<body>.+?)\s*$", re.IGNORECASE),
+    re.compile(r"^\s*there\s+are\s+no\s+(?P<body>.+?)\s*$", re.IGNORECASE),
+    re.compile(r"^\s*no\s+(?P<body>.+?)\s*$", re.IGNORECASE),
+]
+
+
+def has_hedge(claim: str) -> bool:
+    """Uncertain language — never gets a hard negation, only abstention."""
+    return bool(HEDGE_PATTERN.search(claim or ""))
+
+
+def make_counterclaim(claim: str) -> dict:
+    """Build the minimal counterclaim for pairwise verification.
+
+    Returns {is_negated, claim_text, counterclaim_text or None, reason}.
+    Positive claim -> "No <claim-stripped>". Negated claim -> stripped
+    positive. Hedged or empty claims -> counterclaim None (abstain path).
+    """
+    text = (claim or "").strip().rstrip(".")
+    if not text:
+        return {"is_negated": False, "claim_text": claim,
+                "counterclaim_text": None, "reason": "empty claim"}
+    if has_hedge(text):
+        return {"is_negated": False, "claim_text": claim,
+                "counterclaim_text": None,
+                "reason": "hedged language: no hard negation generated"}
+    for rx in _NEG_STRIP_RES:
+        m = rx.match(text)
+        if m:
+            body = m.group("body").strip()
+            if body:
+                return {"is_negated": True, "claim_text": claim,
+                        "counterclaim_text": body,
+                        "reason": "negated claim: counterclaim is the positive form"}
+    stripped = re.sub(r"^(a|an|the)\s+", "", text, flags=re.IGNORECASE).strip()
+    return {"is_negated": False, "claim_text": claim,
+            "counterclaim_text": f"No {stripped or text}",
+            "reason": "positive claim: counterclaim is the denial"}
+
+
 def invert_for_negation(match_unit: float) -> float:
     """[0,1] match of the negated content -> risk. NaN propagates."""
     if match_unit != match_unit:

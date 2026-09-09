@@ -11,7 +11,16 @@ seed: 42
 # ------------------------------------------------------------------- fusion
 # v1 -> fixed equal-weight average over active signals
 # v2 -> rule-based adaptive weighting (deterministic; see fusion/vtrace_fusion.py)
+# v3 -> pairwise contradiction + calibrated abstention (supported /
+#       contradicted / unresolved + reasons + evidence coverage)
 fusion_mode: v2
+
+# v3 pairwise thresholds (named constants live in fusion/vtrace_fusion.py).
+pairwise:
+  enabled: true             # --fusion-mode v3 scores claim vs counterclaim
+  margin_threshold: 0.12    # |margin| above this is decisive
+  abstention_threshold: 0.60  # risk above this routes to human/GPU review
+  ambiguity_width: 0.35     # margin scale mapping to ambiguity in [0,1]
 
 # Which signals participate. Turning one off removes it from the weighting and
 # the remaining weights renormalize — no code change needed.

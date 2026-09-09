@@ -64,9 +64,11 @@ NAN_RATE_ALARM = 0.25
 # =========================================================================
 
 
-def collect_signals(image, claims, generation, cfg, models) -> list[SignalBundle]:
+def collect_signals(image, claims, generation, cfg, models
+                      ) -> tuple[list[SignalBundle], object]:
     """
-    One SignalBundle per claim.
+    One SignalBundle per claim, plus the encoded regions (returned so v3
+    pairwise scoring reuses them instead of re-encoding the image).
 
     Regions are proposed AND encoded once per image, not once per claim. With a
     3x3 grid that is 10 CLIP image encodes per image instead of 10 per claim,
@@ -146,7 +148,7 @@ def collect_signals(image, claims, generation, cfg, models) -> list[SignalBundle
 
         bundles.append(b)
 
-    return bundles
+    return bundles, regions
 
 
 # =========================================================================
@@ -278,7 +280,7 @@ def process_image(image_path: Path, cfg: dict, models: dict, stats: Counter,
     stats["claims_unlocated"] += unlocated
     stats["claims_total"] += len(claims)
 
-    bundles = collect_signals(image, claims, generation, cfg, models)
+    bundles, regions = collect_signals(image, claims, generation, cfg, models)
 
     # Per-signal availability accounting. Without this you cannot distinguish
     # "the fusion says 0.6" from "four of five signals were NaN and the fusion
@@ -289,30 +291,57 @@ def process_image(image_path: Path, cfg: dict, models: dict, stats: Counter,
             if raw[s] != raw[s]:  # NaN
                 stats[f"nan_{s}"] += 1
 
+    # v3 pairwise scoring reuses the already-encoded regions: one extra *text*
+    # encode per claim, zero extra image encodes.
+    pairwise_list: list[dict] = [{} for _ in bundles]
+    if cfg["fusion_mode"] == "v3" and regions is not None:
+        from fusion.negation import make_counterclaim
+
+        clip = models["clip"]
+        for b, pw_slot in zip(bundles, pairwise_list):
+            cc = make_counterclaim(b.claim_text)
+            if clip is not None and cc["counterclaim_text"]:
+                pw_slot.update(clip.pairwise_scores(
+                    b.claim_text, cc["counterclaim_text"], regions))
+            else:
+                pw_slot.update({"claim_match": float("nan"),
+                                "counter_match": float("nan"),
+                                "margin": float("nan"), "ambiguity": float("nan"),
+                                "reason": cc["reason"]})
+            stats["pairwise_scored"] += 1
+
     results = [
         fuse(
             b,
             mode=cfg["fusion_mode"],
             active_signals=cfg["signals"],
             drop_stubbed=cfg.get("drop_stubbed", True),
+            pairwise=pw,
         )
-        for b in bundles
+        for b, pw in zip(bundles, pairwise_list)
     ]
     # Negation correction (CLIP matches "no dog" to dogs: invert for negated
     # claims). Post-fusion so core weights are untouched; always flagged.
+    # Skipped in v3 mode: v3 verifies negated claims through the positive
+    # form's match directly, so the legacy override would double-count.
     from fusion.negation import apply_negation
 
-    for b, r in zip(bundles, results):
-        corr, neg = apply_negation(b.claim_text, r.risks.get("evidence", float("nan")),
-                                   r.risks.get("clip_similarity", float("nan")))
-        if neg and corr == corr:
-            r.risk = corr
-            r.rules_fired = [*r.rules_fired,
-                             "negation-inverted (negated claim: match = risk)"]
+    if cfg["fusion_mode"] != "v3":
+        for b, r in zip(bundles, results):
+            corr, neg = apply_negation(b.claim_text, r.risks.get("evidence", float("nan")),
+                                       r.risks.get("clip_similarity", float("nan")))
+            if neg and corr == corr:
+                r.risk = corr
+                r.rules_fired = [*r.rules_fired,
+                                 "negation-inverted (negated claim: match = risk)"]
 
     for r in results:
         if r.risk != r.risk:
             stats["claims_unscored"] += 1
+        if r.verdict is not None:
+            stats[f"verdict_{r.verdict}"] += 1
+            if r.verdict == "unresolved":
+                stats["claims_unresolved"] += 1
         for rule in r.rules_fired:
             if rule.startswith("CED"):
                 stats["rule1_fired"] += 1
@@ -382,6 +411,14 @@ def run_summary(stats: Counter, models: dict | None, n_ok: int, n_failed: int) -
         r2 = stats.get("rule2_fired", 0) / total
         lines.append(f"rule 1 (CED) fired on {r1:.1%} of claims")
         lines.append(f"rule 2 (disagreement) fired on {r2:.1%} of claims")
+        vtot = sum(stats.get(f"verdict_{v}", 0) for v in
+                   ("supported", "contradicted", "unresolved"))
+        if vtot:
+            lines.append("v3 verdicts: " +
+                         ", ".join(f"{v}={stats.get(f'verdict_{v}', 0)}"
+                                   for v in ("supported", "contradicted", "unresolved")))
+            lines.append(f"evidence coverage: "
+                         f"{(vtot - stats.get('claims_unresolved', 0)) / vtot:.1%} decisive")
         for name, rate in (("rule 1", r1), ("rule 2", r2)):
             if rate > 0.9 or (0 < rate < 0.02):
                 lines.append(
@@ -497,8 +534,8 @@ def load_config(path: str) -> dict:
     cfg.setdefault("prompt", "Describe this image in detail.")
     cfg.setdefault("drop_stubbed", True)
     cfg.setdefault("seed", 0)
-    if cfg["fusion_mode"] not in ("v1", "v2"):
-        raise ValueError(f"fusion_mode must be v1 or v2, got {cfg['fusion_mode']!r}")
+    if cfg["fusion_mode"] not in ("v1", "v2", "v3"):
+        raise ValueError(f"fusion_mode must be v1, v2 or v3, got {cfg['fusion_mode']!r}")
     for key in ("method", "topk"):
         if key not in cfg["aggregation"]:
             raise KeyError(f"config {path}: aggregation.{key} is required")
@@ -542,7 +579,7 @@ def main() -> int:
     ap.add_argument("--image", help="single image path")
     ap.add_argument("--images", help="directory of images")
     ap.add_argument("--prompt", help="override the prompt in config")
-    ap.add_argument("--fusion-mode", choices=["v1", "v2"], help="override config")
+    ap.add_argument("--fusion-mode", choices=["v1", "v2", "v3"], help="override config")
     ap.add_argument("--limit", type=int, help="stop after N images")
     ap.add_argument("--out", help="write results JSON here")
     ap.add_argument("--dry-run", action="store_true", help="fusion only, no models")

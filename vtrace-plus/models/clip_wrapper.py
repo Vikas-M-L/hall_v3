@@ -315,9 +315,37 @@ class CLIPWrapper:
 
     # ------------------------------------------------------------------ signals
 
-    def similarity(self, claim: str, regions: RegionSet) -> float:
+    def pairwise_scores(self, claim: str, counterclaim: str | None,
+                          regions: RegionSet, ambiguity_width: float = 0.35) -> dict:
+        """Match units ([0,1], higher = stronger match) for a claim and its
+        counterclaim against the WHOLE image, plus margin and ambiguity.
+
+        Whole-image (not region-max): the margin needs a stable comparator, and
+        region-max over short denials is noisy. Both texts go through the same
+        templates and the same [cos_min, cos_max] window, so the margin is
+        calibration-consistent. NaN propagates; ambiguity is NaN when either
+        side is NaN. counterclaim None (hedged/empty) -> all-NaN with reason.
         """
-        Claim vs. the WHOLE image. Higher = better semantic match.
+        if not counterclaim:
+            return {"claim_match": float("nan"), "counter_match": float("nan"),
+                    "margin": float("nan"), "ambiguity": float("nan"),
+                    "reason": "no counterclaim (hedged or empty)"}
+        try:
+            txt = self._embed_texts([claim, counterclaim])
+            whole = regions.embeds[0]
+            pm = self._to_unit(float(whole @ txt[0]))
+            nm = self._to_unit(float(whole @ txt[1]))
+            margin = pm - nm
+            ambiguity = float(max(0.0, min(1.0, 1.0 - abs(margin) / ambiguity_width)))
+            return {"claim_match": pm, "counter_match": nm, "margin": margin,
+                    "ambiguity": ambiguity, "reason": "ok"}
+        except Exception as exc:
+            logger.warning("CLIP pairwise failed: %s", exc)
+            return {"claim_match": float("nan"), "counter_match": float("nan"),
+                    "margin": float("nan"), "ambiguity": float("nan"),
+                    "reason": str(exc)[:100]}
+    def similarity(self, claim: str, regions: RegionSet) -> float:
+        """Claim vs. the WHOLE image. Higher = better semantic match.
 
         Region 0 is the full image by construction, so this reuses the already
         computed embedding rather than encoding the image again.

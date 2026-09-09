@@ -132,7 +132,9 @@ with st.sidebar:
                                help="Draws one box per animal/object and counts. Fixes CLIP "
                                     "count-blindness ('2 dogs' vs 2 cats). Slow first load (~3 min), "
                                     "seconds after.")
-        fusion_mode = st.selectbox("Fusion mode", ["v1", "v2"], index=0)
+        fusion_mode = st.selectbox("Fusion mode", ["v1", "v2", "v3"], index=0,
+                                     help="v3 = pairwise contradiction + abstention: "
+                                          "supported / contradicted / unresolved + reasons.")
         clip_model = st.selectbox(
             "CLIP checkpoint",
             ["google/siglip-so400m-patch14-384",
@@ -301,6 +303,9 @@ if run:
         active = {"confidence": False, "evidence": True, "clip_similarity": True,
                   "uniprobe": False, "counterfactual": False}
         rows = []
+        v3_on = (fusion_mode == "v3")
+        if v3_on:
+            from fusion.negation import make_counterclaim
         for c in claims:
             score, box, whole_won = clip.evidence(c.text, regions)
             sim = clip.similarity(c.text, regions)
@@ -308,13 +313,21 @@ if run:
                              claim_type=c.claim_type,
                              evidence=score, clip_similarity=sim,
                              stubbed=("uniprobe", "counterfactual"))
-            r = fuse(b, mode=fusion_mode, active_signals=active, drop_stubbed=True)
-            corr, neg = apply_negation(c.text, r.risks.get("evidence", float("nan")),
-                                       r.risks.get("clip_similarity", float("nan")))
-            if neg and corr == corr:
-                r.risk = corr
-                r.rules_fired = [*r.rules_fired,
-                                 "negation-inverted (negated claim: match = risk)"]
+            pw = {}
+            if v3_on:
+                cc = make_counterclaim(c.text)
+                if cc["counterclaim_text"]:
+                    pw = clip.pairwise_scores(c.text, cc["counterclaim_text"], regions)
+            r = fuse(b, mode=fusion_mode, active_signals=active, drop_stubbed=True,
+                     pairwise=pw if v3_on else None)
+            if not v3_on:
+                # v3 verifies negated claims through the positive form itself.
+                corr, neg = apply_negation(c.text, r.risks.get("evidence", float("nan")),
+                                           r.risks.get("clip_similarity", float("nan")))
+                if neg and corr == corr:
+                    r.risk = corr
+                    r.rules_fired = [*r.rules_fired,
+                                     "negation-inverted (negated claim: match = risk)"]
             r.consistency_uncertainty = (
                 float(1.0 - sum(_f1(c.text, s) for s in samples) / len(samples))
                 if samples else float("nan"))
@@ -328,6 +341,7 @@ if run:
 
     # Mechanism diagnosis + repair routing for every claim (transparent rules).
     from fusion.diagnose import diagnose
+    from fusion.negation import has_negation
 
     def _nan2none(v):
         return None if v != v else float(v)
@@ -340,7 +354,8 @@ if run:
             r.risk, r.risks.get("evidence", float("nan")),
             r.risks.get("clip_similarity", float("nan")),
             claim_type=c.claim_type,
-            negated=any("negation-inverted" in f for f in r.rules_fired),
+            negated=(any("negation-inverted" in f for f in r.rules_fired)
+                     or (v3_on and has_negation(c.text))),
             uncertainty=unc,
             count_match=(cc["match"] if cc else None),
             vlm_supported=vv.get("supported"))
@@ -420,6 +435,16 @@ if run:
     t2.markdown(f"<div class='tile'><div class='tile-num' style='color:#34d399'>{n_g}</div><div class='tile-label'>grounded</div></div>", unsafe_allow_html=True)
     t3.markdown(f"<div class='tile'><div class='tile-num' style='color:#fbbf24'>{n_u}</div><div class='tile-label'>uncertain</div></div>", unsafe_allow_html=True)
     t4.markdown(f"<div class='tile'><div class='tile-num' style='color:#f87171'>{n_b}</div><div class='tile-label'>flagged</div></div>", unsafe_allow_html=True)
+    if fusion_mode == "v3":
+        from fusion.vtrace_fusion import evidence_coverage
+
+        cov = evidence_coverage([r for _, r, _ in rows])
+        vs = sum(1 for _, r, _ in rows if r.verdict == "supported")
+        vc = sum(1 for _, r, _ in rows if r.verdict == "contradicted")
+        vu = sum(1 for _, r, _ in rows if r.verdict == "unresolved")
+        st.info(f"v3 verdicts: {vs} supported · {vc} contradicted · {vu} unresolved — "
+                f"evidence coverage {cov['coverage']:.0%} decisive "
+                f"({cov['decisive']}/{cov['total']}).")
     if n_xcheck:
         st.caption(f"Cascade: {n_xcheck}/{len(rows)} claims needed the VLM "
                    f"({100 * (1 - n_xcheck / len(rows)):.0f}% decided by free CLIP signals).")
@@ -482,6 +507,21 @@ if run:
                 count_txt = f" · <b style='color:#34d399'>COUNT OK: {cc['reason']}</b>"
             else:
                 count_txt = f" · <b style='color:#f87171'>COUNT MISMATCH: {cc['reason']}</b>"
+            v3_txt = ""
+            if getattr(r, "verdict", None):
+                vcls3 = {"supported": "badge-ok", "contradicted": "badge-bad"}.get(
+                    r.verdict, "badge-warn")
+                pw = r.pairwise or {}
+                pm = pw.get("claim_match", float("nan"))
+                nm = pw.get("counter_match", float("nan"))
+                mg = pw.get("margin", float("nan"))
+                side = ("claim %.2f vs counter %.2f (margin %+.2f)" % (pm, nm, mg)
+                        if mg == mg else "pairwise unavailable")
+                v3_txt = (f"<div class='sig-row'><span class='sig-name'>v3 verdict</span>"
+                          f"<span class='badge {vcls3}'>{r.verdict.upper()}</span></div>"
+                          f"<div class='small'>{side}"
+                          + (f"<br>reasons: {'; '.join(r.reasons)}" if r.reasons else "")
+                          + "</div>")
             st.markdown(
                 f"<div class='risk-card'><div style='display:flex;justify-content:space-between;align-items:center'>"
                 f"<div><span class='medal {mcls}'>#{i+1}</span><b>{c.text}</b></div>"
@@ -494,7 +534,7 @@ if run:
                 f"<div class='sig-track'><div class='sig-fill-s' style='width:{sw}%'></div></div>"
                 f"<span class='sig-val'>{sr:.2f}</span></div>"
                 f"<div class='small' style='margin-top:6px'>risk {r.risk:.3f} · {c.claim_type} · "
-                f"top signal: {r.top_signal()}{unc_txt}{vlm_txt}{count_txt}</div>{mech_txt}</div>",
+                f"top signal: {r.top_signal()}{unc_txt}{vlm_txt}{count_txt}</div>{mech_txt}{v3_txt}</div>",
                 unsafe_allow_html=True,
             )
 

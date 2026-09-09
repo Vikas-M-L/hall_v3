@@ -108,6 +108,26 @@ DISAGREEMENT_THRESHOLD: float = 0.20
 DISAGREEMENT_DOWNWEIGHT_DETECTORS: float = 0.60
 DISAGREEMENT_UPWEIGHT_CLIP: float = 2.00
 
+# --- v3: pairwise contradiction + calibrated abstention -------------------
+# v3 keeps the v1 equal-weight base risk and adds two deterministic terms from
+# the claim-vs-counterclaim margin (match units, same calibration window):
+#   contra_strength = clip(-margin / 0.5) in [0,1] — counterclaim winning
+#   risk_v3 = (1-a)*base + a*0.5 + c*contra, a = AMBIGUITY_WEIGHT*ambiguity
+# Plus a three-state verdict from the margin alone, and a reasons list naming
+# every trigger. v1/v2 code paths are untouched by this block.
+PAIRWISE_MARGIN_THRESHOLD: float = 0.12
+PAIRWISE_AMBIGUITY_THRESHOLD: float = 0.35
+ABSTENTION_THRESHOLD: float = 0.60
+CONTRADICTION_WEIGHT: float = 0.20
+AMBIGUITY_WEIGHT: float = 0.15
+LOCAL_GLOBAL_GAP_THRESHOLD: float = 0.35
+# Negated claims ("There is no X") are verified through the POSITIVE form's
+# match m: m high means X is present so the denial is contradicted; m low
+# means X is absent so the denial is supported. Margin math cannot do this —
+# both texts share the content words, so the margin mostly measures fluency.
+PAIRWISE_NEG_HIGH: float = 0.60
+PAIRWISE_NEG_LOW: float = 0.40
+
 # --- Aggregation ----------------------------------------------------------
 DEFAULT_TOPK: int = 3
 
@@ -160,6 +180,9 @@ class FusionResult:
     mode: str = "v2"
     claim_id: str | None = None
     claim_text: str = ""
+    verdict: str | None = None               # v3 only: supported|contradicted|unresolved
+    reasons: list[str] = field(default_factory=list)   # v3 only: why this verdict
+    pairwise: dict = field(default_factory=dict)       # v3 only: margin/ambiguity detail
 
     def top_signal(self) -> str | None:
         """The signal contributing most to this risk score."""
@@ -207,7 +230,89 @@ class FusionResult:
             "rules_fired": self.rules_fired,
             "excluded": self.excluded,
             "top_signal": self.top_signal(),
+            "verdict": self.verdict,
+            "reasons": self.reasons,
+            "pairwise": self.pairwise,
         }
+
+
+def v3_verdict_and_risk(base_risk: float, risks: dict[str, float],
+                        disagreement: float, pairwise: dict | None,
+                        is_negated: bool = False) -> tuple:
+    """v3: three-state verdict + adjusted risk + reasons.
+
+    Positive claims use the claim-vs-counterclaim margin (same-window match
+    units): margin > +thr -> supported; < -thr -> contradicted; else
+    unresolved. Negated claims are verified through the POSITIVE form's match
+    m instead (the margin is fluency noise when both texts share content
+    words): m > NEG_HIGH -> contradicted, m < NEG_LOW -> supported.
+    Risk starts at the v1 base and is pulled toward 0.5 by ambiguity and
+    pushed up by contradiction strength. Reasons name triggers: near-tie,
+    weak localization, local/global gap, detector disagreement,
+    confident-model-vs-uncertain-verifier, abstention-level risk.
+    """
+    pw = pairwise or {}
+    margin = pw.get("margin", float("nan"))
+    amb = pw.get("ambiguity", float("nan"))
+    reasons: list[str] = []
+    if is_negated:
+        m = pw.get("counter_match", float("nan"))
+        if m != m:
+            verdict = "unresolved"
+            reasons.append("no positive-form match available")
+        elif m > PAIRWISE_NEG_HIGH:
+            verdict = "contradicted"
+            reasons.append(f"positive form matches at {m:.2f}: the denial is false")
+        elif m < PAIRWISE_NEG_LOW:
+            verdict = "supported"
+            reasons.append(f"positive form matches at {m:.2f}: the denial holds")
+        else:
+            verdict = "unresolved"
+            reasons.append(f"positive-form match {m:.2f} is inconclusive")
+    elif margin != margin:
+        verdict = "unresolved"
+        reasons.append("no pairwise margin available (hedged, empty, or failed)")
+    elif margin > PAIRWISE_MARGIN_THRESHOLD:
+        verdict = "supported"
+        reasons.append(f"claim wins by margin {margin:+.2f}")
+    elif margin < -PAIRWISE_MARGIN_THRESHOLD:
+        verdict = "contradicted"
+        reasons.append(f"counterclaim wins by margin {margin:+.2f}")
+    else:
+        verdict = "unresolved"
+        reasons.append("positive and negative hypotheses are nearly tied")
+
+    if amb == amb and amb > PAIRWISE_AMBIGUITY_THRESHOLD:
+        if verdict == "unresolved":
+            reasons.append(f"ambiguity {amb:.2f} above threshold")
+    er, sr = risks.get("evidence", float("nan")), risks.get("clip_similarity", float("nan"))
+    if er == er and sr == sr and abs(er - sr) > LOCAL_GLOBAL_GAP_THRESHOLD:
+        reasons.append("local and global evidence disagree "
+                       f"(gap {abs(er - sr):.2f})")
+        if verdict == "supported":
+            verdict = "unresolved"
+    if disagreement == disagreement and disagreement > DISAGREEMENT_THRESHOLD:
+        reasons.append("detectors disagree beyond Rule 2 threshold")
+    cr = risks.get("confidence", float("nan"))
+    if (cr == cr and cr < 0.2 and base_risk == base_risk
+            and 0.35 <= base_risk <= 0.65):
+        reasons.append("VLM is confident but the verifier is uncertain")
+
+    if is_negated:
+        m = pw.get("counter_match", float("nan"))
+        contra = float(max(0.0, min(1.0, (m - 0.5) / 0.5))) if m == m else 0.0
+    else:
+        contra = (float(max(0.0, min(1.0, -margin / 0.5)))
+                  if margin == margin else 0.0)
+    a = AMBIGUITY_WEIGHT * (amb if amb == amb else 0.0)
+    if base_risk != base_risk:
+        risk = float("nan")
+    else:
+        risk = float(np.clip((1 - a) * base_risk + a * 0.5
+                             + CONTRADICTION_WEIGHT * contra, 0.0, 1.0))
+    if risk == risk and risk >= ABSTENTION_THRESHOLD and verdict != "contradicted":
+        reasons.append("risk above abstention threshold — route to human/GPU review")
+    return verdict, risk, reasons
 
 
 # =========================================================================
@@ -373,24 +478,28 @@ def fuse(
     mode: str = "v2",
     active_signals: dict[str, bool] | None = None,
     drop_stubbed: bool = False,
+    pairwise: dict | None = None,
 ) -> FusionResult:
     """
     Fuse one claim's signals into a risk score.
 
     Parameters
     ----------
-    mode           "v1" (equal weights) or "v2" (rule-based adaptive)
+    mode           "v1" (equal weights), "v2" (rule-based adaptive) or
+                   "v3" (pairwise contradiction + calibrated abstention;
+                   needs `pairwise` from CLIPWrapper.pairwise_scores)
     active_signals config toggles; a signal set False is excluded entirely
     drop_stubbed   if True, signals listed in `bundle.stubbed` are excluded.
-                   A stubbed signal returns the same constant for every claim,
-                   so it adds no information and only drags scores toward that
-                   constant. Worth enabling once you know which are stubbed.
+                    A stubbed signal returns the same constant for every claim,
+                    so it adds no information and only drags scores toward that
+                    constant. Worth enabling once you know which are stubbed.
+    pairwise       v3 only: {margin, ambiguity, ...} in same-window match units
 
     Signals that are NaN (a model failed, or was never wired in) are dropped and
     the remaining weights renormalize over what is left.
     """
-    if mode not in ("v1", "v2"):
-        raise ValueError(f"fusion mode must be 'v1' or 'v2', got {mode!r}")
+    if mode not in ("v1", "v2", "v3"):
+        raise ValueError(f"fusion mode must be 'v1', 'v2' or 'v3', got {mode!r}")
 
     toggles = active_signals or {s: True for s in ALL_SIGNALS}
     raw = bundle.as_dict()
@@ -435,11 +544,23 @@ def fuse(
 
     if mode == "v1":
         weights, fired = v1_weights(available)
+    elif mode == "v3":
+        weights, fired = v1_weights(available)
+        fired = ["v3: equal-weight base + pairwise adjustment"]
     else:
         weights, fired = v2_weights(available, risks, ced, disagreement)
 
     contributions = {s: weights[s] * risks[s] for s in available}
     risk = float(np.clip(sum(contributions.values()), 0.0, 1.0))
+
+    verdict, reasons, pw = None, [], {}
+    if mode == "v3":
+        from fusion.negation import make_counterclaim
+
+        is_neg = make_counterclaim(bundle.claim_text)["is_negated"]
+        verdict, risk, reasons = v3_verdict_and_risk(risk, risks, disagreement,
+                                                    pairwise, is_negated=is_neg)
+        pw = dict(pairwise or {})
 
     return FusionResult(
         risk=risk,
@@ -453,6 +574,9 @@ def fuse(
         mode=mode,
         claim_id=bundle.claim_id,
         claim_text=bundle.claim_text,
+        verdict=verdict,
+        reasons=reasons,
+        pairwise=pw,
     )
 
 
@@ -479,3 +603,29 @@ def aggregate(claim_risks: list[float], method: str = "max", topk: int = DEFAULT
         k = max(1, min(topk, len(vals)))
         return float(np.mean(sorted(vals, reverse=True)[:k]))
     raise ValueError(f"unknown aggregation method: {method}")
+
+
+def evidence_coverage(results: list[FusionResult],
+                      exclude_hedged: bool = True) -> dict:
+    """Image-level decisiveness: decisive claims / total claims.
+
+    Decisive = verdict is supported or contradicted (v3), or — for v1/v2
+    results without verdicts — risk outside the [0.35, 0.65) band. Hedged
+    claims (rules mention hedging/no-counterclaim) are excluded when
+    exclude_hedged=True: they were never verifiable, so they must not dilute
+    coverage. Separates 'high risk because contradicted' from 'high
+    uncertainty because unverifiable'.
+    """
+    tot, dec = 0, 0
+    for r in results:
+        text = " ".join(r.rules_fired) + " " + " ".join(r.reasons)
+        if exclude_hedged and ("hedg" in text or "no counterclaim" in text):
+            continue
+        tot += 1
+        if r.verdict is not None:
+            if r.verdict in ("supported", "contradicted"):
+                dec += 1
+        elif r.risk == r.risk and (r.risk < 0.35 or r.risk >= 0.65):
+            dec += 1
+    return {"decisive": dec, "total": tot,
+            "coverage": (dec / tot) if tot else float("nan")}

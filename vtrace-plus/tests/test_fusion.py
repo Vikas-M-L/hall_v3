@@ -304,7 +304,7 @@ def test_no_usable_signals_yields_nan_not_a_confident_zero():
 
 def test_bad_mode_is_rejected():
     try:
-        fuse(SignalBundle(confidence=0.5), mode="v3", active_signals=ALL_ON)
+        fuse(SignalBundle(confidence=0.5), mode="v4", active_signals=ALL_ON)
     except ValueError:
         return
     raise AssertionError("expected ValueError for unknown fusion mode")
