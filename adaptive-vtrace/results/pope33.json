@@ -1,0 +1,454 @@
+{
+  "siglip-whole": {
+    "random": {
+      "n": 10,
+      "auroc": 0.9166666666666666,
+      "auprc": 0.9484126984126984,
+      "auroc_ci95": [
+        0.625,
+        1.0
+      ],
+      "f1": 0.9230769230769231,
+      "precision": 0.8571428571428571,
+      "recall": 1.0,
+      "accuracy": 0.9,
+      "threshold": 0.5
+    },
+    "popular": {
+      "n": 10,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "auroc_ci95": [
+        1.0,
+        1.0
+      ],
+      "f1": 0.9230769230769231,
+      "precision": 0.8571428571428571,
+      "recall": 1.0,
+      "accuracy": 0.9,
+      "threshold": 0.5
+    },
+    "adversarial": {
+      "n": 10,
+      "auroc": 0.8333333333333334,
+      "auprc": 0.8972222222222221,
+      "auroc_ci95": [
+        0.5,
+        1.0
+      ],
+      "f1": 0.7272727272727273,
+      "precision": 0.8,
+      "recall": 0.6666666666666666,
+      "accuracy": 0.7,
+      "threshold": 0.5
+    },
+    "all": {
+      "n": 30,
+      "auroc": 0.9166666666666666,
+      "auprc": 0.9499426671253297,
+      "auroc_ci95": [
+        0.783,
+        0.99
+      ],
+      "f1": 0.8648648648648649,
+      "precision": 0.8421052631578947,
+      "recall": 0.8888888888888888,
+      "accuracy": 0.8333333333333334,
+      "threshold": 0.5
+    }
+  },
+  "clipB32-grid": {
+    "random": {
+      "n": 10,
+      "auroc": 0.9166666666666666,
+      "auprc": 0.9484126984126984,
+      "auroc_ci95": [
+        0.619,
+        1.0
+      ],
+      "f1": 0.9230769230769231,
+      "precision": 0.8571428571428571,
+      "recall": 1.0,
+      "accuracy": 0.9,
+      "threshold": 0.5
+    },
+    "popular": {
+      "n": 10,
+      "auroc": 0.9583333333333334,
+      "auprc": 0.976190476190476,
+      "auroc_ci95": [
+        0.75,
+        1.0
+      ],
+      "f1": 0.9230769230769231,
+      "precision": 0.8571428571428571,
+      "recall": 1.0,
+      "accuracy": 0.9,
+      "threshold": 0.5
+    },
+    "adversarial": {
+      "n": 10,
+      "auroc": 0.8333333333333334,
+      "auprc": 0.8972222222222221,
+      "auroc_ci95": [
+        0.442,
+        1.0
+      ],
+      "f1": 0.8333333333333334,
+      "precision": 0.8333333333333334,
+      "recall": 0.8333333333333334,
+      "accuracy": 0.8,
+      "threshold": 0.5
+    },
+    "all": {
+      "n": 30,
+      "auroc": 0.9027777777777778,
+      "auprc": 0.9395260004586631,
+      "auroc_ci95": [
+        0.76,
+        0.978
+      ],
+      "f1": 0.8947368421052632,
+      "precision": 0.85,
+      "recall": 0.9444444444444444,
+      "accuracy": 0.8666666666666667,
+      "threshold": 0.5
+    }
+  },
+  "chance": {
+    "random": {
+      "n": 10,
+      "auroc": 0.5,
+      "auprc": 0.6,
+      "auroc_ci95": [
+        0.5,
+        0.5
+      ],
+      "f1": 0.75,
+      "precision": 0.6,
+      "recall": 1.0,
+      "accuracy": 0.6,
+      "threshold": 0.5
+    },
+    "popular": {
+      "n": 10,
+      "auroc": 0.5,
+      "auprc": 0.6,
+      "auroc_ci95": [
+        0.5,
+        0.5
+      ],
+      "f1": 0.75,
+      "precision": 0.6,
+      "recall": 1.0,
+      "accuracy": 0.6,
+      "threshold": 0.5
+    },
+    "adversarial": {
+      "n": 10,
+      "auroc": 0.5,
+      "auprc": 0.6,
+      "auroc_ci95": [
+        0.5,
+        0.5
+      ],
+      "f1": 0.75,
+      "precision": 0.6,
+      "recall": 1.0,
+      "accuracy": 0.6,
+      "threshold": 0.5
+    },
+    "all": {
+      "n": 30,
+      "auroc": 0.5,
+      "auprc": 0.6,
+      "auroc_ci95": [
+        0.5,
+        0.5
+      ],
+      "f1": 0.75,
+      "precision": 0.6,
+      "recall": 1.0,
+      "accuracy": 0.6,
+      "threshold": 0.5
+    }
+  },
+  "_meta": {
+    "n_per_split": 10,
+    "seed": 5,
+    "seconds": 117.0,
+    "note": "claims parsed from POPE questions; no VLM responses (needs API key/GPU). y_hall=1 when POPE answer is no."
+  },
+  "_claims": [
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000554002",
+      "claim": "a remote",
+      "y_hall": 1,
+      "siglip-whole": 0.5771414625712417,
+      "clipB32-grid": 0.5397620350122452,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000365317",
+      "claim": "a person",
+      "y_hall": 0,
+      "siglip-whole": 0.4578669762069528,
+      "clipB32-grid": 0.4740104377269744,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000390184",
+      "claim": "a dining table",
+      "y_hall": 0,
+      "siglip-whole": 0.2661832137541337,
+      "clipB32-grid": 0.31133341789245594,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000108189",
+      "claim": "a clock",
+      "y_hall": 1,
+      "siglip-whole": 0.7558532181111248,
+      "clipB32-grid": 0.7075503766536713,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000505335",
+      "claim": "a microwave",
+      "y_hall": 1,
+      "siglip-whole": 0.825985888865861,
+      "clipB32-grid": 0.7657873183488846,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000280810",
+      "claim": "a broccoli",
+      "y_hall": 0,
+      "siglip-whole": 0.37304601073265076,
+      "clipB32-grid": 0.3643532395362853,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000526368",
+      "claim": "a microwave",
+      "y_hall": 1,
+      "siglip-whole": 0.6973294663158329,
+      "clipB32-grid": 0.5363567471504211,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000472375",
+      "claim": "a bowl",
+      "y_hall": 1,
+      "siglip-whole": 0.509782600639896,
+      "clipB32-grid": 0.6312517374753952,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000441156",
+      "claim": "a toaster",
+      "y_hall": 1,
+      "siglip-whole": 0.8456909981640902,
+      "clipB32-grid": 0.7134392410516739,
+      "chance": 0.5
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000244455",
+      "claim": "a truck",
+      "y_hall": 0,
+      "siglip-whole": 0.6391580761833624,
+      "clipB32-grid": 0.6012897491455078,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000554002",
+      "claim": "a dining table",
+      "y_hall": 1,
+      "siglip-whole": 0.7051439400423656,
+      "clipB32-grid": 0.6490200310945511,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000365317",
+      "claim": "a person",
+      "y_hall": 0,
+      "siglip-whole": 0.4578669762069528,
+      "clipB32-grid": 0.4740104377269744,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000390184",
+      "claim": "a dining table",
+      "y_hall": 0,
+      "siglip-whole": 0.2661832137541337,
+      "clipB32-grid": 0.31133341789245594,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000108189",
+      "claim": "a person",
+      "y_hall": 1,
+      "siglip-whole": 0.9746385013515299,
+      "clipB32-grid": 0.6100468635559082,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000505335",
+      "claim": "a dining table",
+      "y_hall": 1,
+      "siglip-whole": 0.6481281180273403,
+      "clipB32-grid": 0.7496825158596039,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000280810",
+      "claim": "a broccoli",
+      "y_hall": 0,
+      "siglip-whole": 0.37304601073265076,
+      "clipB32-grid": 0.3643532395362853,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000526368",
+      "claim": "a car",
+      "y_hall": 1,
+      "siglip-whole": 0.7353490848432888,
+      "clipB32-grid": 0.5607509166002274,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000472375",
+      "claim": "a dining table",
+      "y_hall": 1,
+      "siglip-whole": 0.6554099514403127,
+      "clipB32-grid": 0.6051541417837143,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000441156",
+      "claim": "a chair",
+      "y_hall": 1,
+      "siglip-whole": 0.713493754917925,
+      "clipB32-grid": 0.6187309622764587,
+      "chance": 0.5
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000244455",
+      "claim": "a truck",
+      "y_hall": 0,
+      "siglip-whole": 0.6391580761833624,
+      "clipB32-grid": 0.6012897491455078,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000554002",
+      "claim": "a dining table",
+      "y_hall": 1,
+      "siglip-whole": 0.7051439400423656,
+      "clipB32-grid": 0.6490200310945511,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000365317",
+      "claim": "a person",
+      "y_hall": 0,
+      "siglip-whole": 0.4578669762069528,
+      "clipB32-grid": 0.4740104377269744,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000390184",
+      "claim": "a dining table",
+      "y_hall": 0,
+      "siglip-whole": 0.2661832137541337,
+      "clipB32-grid": 0.31133341789245594,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000108189",
+      "claim": "a bowl",
+      "y_hall": 1,
+      "siglip-whole": 0.47663890028541733,
+      "clipB32-grid": 0.5174020230770111,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000505335",
+      "claim": "a car",
+      "y_hall": 1,
+      "siglip-whole": 0.6006153972650116,
+      "clipB32-grid": 0.7812698483467102,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000280810",
+      "claim": "a broccoli",
+      "y_hall": 0,
+      "siglip-whole": 0.37304601073265076,
+      "clipB32-grid": 0.3643532395362853,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000526368",
+      "claim": "a person",
+      "y_hall": 1,
+      "siglip-whole": 0.7416027973998676,
+      "clipB32-grid": 0.4726682901382445,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000472375",
+      "claim": "a car",
+      "y_hall": 1,
+      "siglip-whole": 0.4209924357181245,
+      "clipB32-grid": 0.5598305463790894,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000441156",
+      "claim": "a dining table",
+      "y_hall": 1,
+      "siglip-whole": 0.8134252429008484,
+      "clipB32-grid": 0.6471783220767975,
+      "chance": 0.5
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000244455",
+      "claim": "a truck",
+      "y_hall": 0,
+      "siglip-whole": 0.6391580761833624,
+      "clipB32-grid": 0.6012897491455078,
+      "chance": 0.5
+    }
+  ]
+}

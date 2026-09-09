@@ -72,7 +72,7 @@ if rows_v3:
                "to forced-answer accuracy alone does not establish superiority; "
                "the matched-coverage baseline ties v3 on these development cases.")
 
-st.info("Read honestly: pooled n=67 unique claims — siglip-whole AUROC 0.933/F1 0.905, "
-        "clipB32-grid 0.954/0.928 (n=50). Claims are parsed from POPE questions, "
+st.info("Read honestly: extended pool n=88 unique claims — siglip-whole AUROC 0.926/F1 0.906, "
+        "clipB32-grid 0.942/0.932 (n=71). Claims are parsed from POPE questions, "
          "not VLM responses. Generated answers, independent gold and complete baseline "
          "runs are still required. Larger CPU evaluation is possible but slower.")

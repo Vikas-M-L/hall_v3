@@ -202,7 +202,11 @@ the complete environment and source/data hashes accompany the artifacts.
 AUROC, average precision, F1 at 0.5, precision, recall, Brier and ten-bin ECE
 are computed from saved scores. Uncertainty uses 1,000 image-cluster bootstrap
 resamples (seed 42); paired randomization swaps complete image blocks. These
-small-sample exploratory tests are not preregistered confirmatory evidence.
+small-sample exploratory tests are not preregistered confirmatory evidence. An
+extended fifth run (seed 5) grows the deduplicated pool to 88 unique claims:
+whole-image SigLIP AUROC 0.926/F1 0.906 (n=88), CLIP-B/32 grid 0.942/0.932
+(n=71), confirming stability of the $\sim$0.93--0.95 band rather than a new
+best result.
 
 \section{Results and Statistical Analysis}
 \begin{table}[t]
