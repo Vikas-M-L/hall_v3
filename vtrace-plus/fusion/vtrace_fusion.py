@@ -127,6 +127,10 @@ LOCAL_GLOBAL_GAP_THRESHOLD: float = 0.35
 # both texts share the content words, so the margin mostly measures fluency.
 PAIRWISE_NEG_HIGH: float = 0.60
 PAIRWISE_NEG_LOW: float = 0.40
+# When the pairwise margin ties, the base visual match decides if IT is
+# decisive (outside the uncertain band); otherwise the claim stays unresolved.
+BASE_DECISIVE_LOW: float = 0.35
+BASE_DECISIVE_HIGH: float = 0.65
 
 # --- Aggregation ----------------------------------------------------------
 DEFAULT_TOPK: int = 3
@@ -279,8 +283,20 @@ def v3_verdict_and_risk(base_risk: float, risks: dict[str, float],
         verdict = "contradicted"
         reasons.append(f"counterclaim wins by margin {margin:+.2f}")
     else:
-        verdict = "unresolved"
-        reasons.append("positive and negative hypotheses are nearly tied")
+        # Pairwise tie. Bare-noun claims ("a cow") produce tiny margins because
+        # the denial shares every content word; fall back to the base match
+        # when IT is decisive, and reserve 'unresolved' for genuine toss-ups.
+        if base_risk == base_risk and base_risk < BASE_DECISIVE_LOW:
+            verdict = "supported"
+            reasons.append("pairwise tied; base visual match decisively supports "
+                           f"(risk {base_risk:.2f})")
+        elif base_risk == base_risk and base_risk >= BASE_DECISIVE_HIGH:
+            verdict = "contradicted"
+            reasons.append("pairwise tied; base visual match decisively refutes "
+                           f"(risk {base_risk:.2f})")
+        else:
+            verdict = "unresolved"
+            reasons.append("positive and negative hypotheses are nearly tied")
 
     if amb == amb and amb > PAIRWISE_AMBIGUITY_THRESHOLD:
         if verdict == "unresolved":

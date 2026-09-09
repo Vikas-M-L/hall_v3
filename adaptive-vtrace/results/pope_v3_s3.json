@@ -1,0 +1,496 @@
+{
+  "siglip-whole": {
+    "random": {
+      "n": 10,
+      "auroc": 0.9583333333333334,
+      "auprc": 0.95,
+      "auroc_ci95": [
+        0.75,
+        1.0
+      ],
+      "f1": 0.8888888888888888,
+      "precision": 0.8,
+      "recall": 1.0,
+      "accuracy": 0.9,
+      "threshold": 0.5
+    },
+    "popular": {
+      "n": 10,
+      "auroc": 0.8333333333333334,
+      "auprc": 0.6791666666666667,
+      "auroc_ci95": [
+        0.5,
+        1.0
+      ],
+      "f1": 0.5714285714285714,
+      "precision": 0.6666666666666666,
+      "recall": 0.5,
+      "accuracy": 0.7,
+      "threshold": 0.5
+    },
+    "adversarial": {
+      "n": 10,
+      "auroc": 0.9166666666666667,
+      "auprc": 0.8875,
+      "auroc_ci95": [
+        0.622,
+        1.0
+      ],
+      "f1": 0.75,
+      "precision": 0.75,
+      "recall": 0.75,
+      "accuracy": 0.8,
+      "threshold": 0.5
+    },
+    "all": {
+      "n": 30,
+      "auroc": 0.9027777777777778,
+      "auprc": 0.8510975135975137,
+      "auroc_ci95": [
+        0.748,
+        1.0
+      ],
+      "f1": 0.75,
+      "precision": 0.75,
+      "recall": 0.75,
+      "accuracy": 0.8,
+      "threshold": 0.5
+    }
+  },
+  "v3-siglip": {
+    "random": {
+      "n": 10,
+      "auroc": 0.9583333333333334,
+      "auprc": 0.95,
+      "auroc_ci95": [
+        0.75,
+        1.0
+      ],
+      "f1": 0.8888888888888888,
+      "precision": 0.8,
+      "recall": 1.0,
+      "accuracy": 0.9,
+      "threshold": 0.5,
+      "coverage": 0.8,
+      "decisive_acc": 1.0,
+      "n_unresolved": 2
+    },
+    "popular": {
+      "n": 10,
+      "auroc": 0.8333333333333334,
+      "auprc": 0.6791666666666667,
+      "auroc_ci95": [
+        0.5,
+        1.0
+      ],
+      "f1": 0.5714285714285714,
+      "precision": 0.6666666666666666,
+      "recall": 0.5,
+      "accuracy": 0.7,
+      "threshold": 0.5,
+      "coverage": 0.5,
+      "decisive_acc": 1.0,
+      "n_unresolved": 5
+    },
+    "adversarial": {
+      "n": 10,
+      "auroc": 0.9166666666666667,
+      "auprc": 0.8875,
+      "auroc_ci95": [
+        0.622,
+        1.0
+      ],
+      "f1": 0.75,
+      "precision": 0.75,
+      "recall": 0.75,
+      "accuracy": 0.8,
+      "threshold": 0.5,
+      "coverage": 0.7,
+      "decisive_acc": 1.0,
+      "n_unresolved": 3
+    },
+    "all": {
+      "n": 30,
+      "auroc": 0.9027777777777778,
+      "auprc": 0.8510975135975137,
+      "auroc_ci95": [
+        0.748,
+        1.0
+      ],
+      "f1": 0.75,
+      "precision": 0.75,
+      "recall": 0.75,
+      "accuracy": 0.8,
+      "threshold": 0.5,
+      "coverage": 0.6666666666666666,
+      "decisive_acc": 1.0,
+      "n_unresolved": 10
+    }
+  },
+  "chance": {
+    "random": {
+      "n": 10,
+      "auroc": 0.5,
+      "auprc": 0.4,
+      "auroc_ci95": [
+        0.5,
+        0.5
+      ],
+      "f1": 0.5714285714285714,
+      "precision": 0.4,
+      "recall": 1.0,
+      "accuracy": 0.4,
+      "threshold": 0.5
+    },
+    "popular": {
+      "n": 10,
+      "auroc": 0.5,
+      "auprc": 0.4,
+      "auroc_ci95": [
+        0.5,
+        0.5
+      ],
+      "f1": 0.5714285714285714,
+      "precision": 0.4,
+      "recall": 1.0,
+      "accuracy": 0.4,
+      "threshold": 0.5
+    },
+    "adversarial": {
+      "n": 10,
+      "auroc": 0.5,
+      "auprc": 0.4,
+      "auroc_ci95": [
+        0.5,
+        0.5
+      ],
+      "f1": 0.5714285714285714,
+      "precision": 0.4,
+      "recall": 1.0,
+      "accuracy": 0.4,
+      "threshold": 0.5
+    },
+    "all": {
+      "n": 30,
+      "auroc": 0.5,
+      "auprc": 0.4,
+      "auroc_ci95": [
+        0.5,
+        0.5
+      ],
+      "f1": 0.5714285714285714,
+      "precision": 0.4,
+      "recall": 1.0,
+      "accuracy": 0.4,
+      "threshold": 0.5
+    }
+  },
+  "_meta": {
+    "n_per_split": 10,
+    "seed": 3,
+    "seconds": 148.4,
+    "note": "claims parsed from POPE questions; no VLM responses (needs API key/GPU). y_hall=1 when POPE answer is no."
+  },
+  "_claims": [
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000098493",
+      "claim": "a cow",
+      "y_hall": 1,
+      "siglip-whole": 0.537922850894657,
+      "v3-siglip": 0.5361675617670677,
+      "chance": 0.5,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000456178",
+      "claim": "a clock",
+      "y_hall": 0,
+      "siglip-whole": 0.06460267576304346,
+      "v3-siglip": 0.11667450457136314,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000088507",
+      "claim": "a bicycle",
+      "y_hall": 1,
+      "siglip-whole": 0.686579243703322,
+      "v3-siglip": 0.6633188924974512,
+      "chance": 0.5,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000465346",
+      "claim": "a sandwich",
+      "y_hall": 0,
+      "siglip-whole": 0.23972830176353455,
+      "v3-siglip": 0.2826737330842772,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000572075",
+      "claim": "a toilet",
+      "y_hall": 0,
+      "siglip-whole": 0.262448288500309,
+      "v3-siglip": 0.29127426238204146,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000353180",
+      "claim": "a bus",
+      "y_hall": 0,
+      "siglip-whole": 0.3030342933806506,
+      "v3-siglip": 0.36254713728319055,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000211674",
+      "claim": "a broccoli",
+      "y_hall": 1,
+      "siglip-whole": 0.7713807530023835,
+      "v3-siglip": 0.8268872237972532,
+      "chance": 0.5,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000007320",
+      "claim": "a tv",
+      "y_hall": 0,
+      "siglip-whole": 0.22904528677463531,
+      "v3-siglip": 0.2675247984336583,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000257327",
+      "claim": "a bottle",
+      "y_hall": 0,
+      "siglip-whole": 0.6445001594044946,
+      "v3-siglip": 0.6585457470034611,
+      "chance": 0.5,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000534121",
+      "claim": "a orange",
+      "y_hall": 1,
+      "siglip-whole": 0.7601421786980196,
+      "v3-siglip": 0.734113801139464,
+      "chance": 0.5,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000098493",
+      "claim": "a bottle",
+      "y_hall": 1,
+      "siglip-whole": 0.47938961654224177,
+      "v3-siglip": 0.4832457051237971,
+      "chance": 0.5,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000456178",
+      "claim": "a clock",
+      "y_hall": 0,
+      "siglip-whole": 0.06460267576304346,
+      "v3-siglip": 0.11667450457136314,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000088507",
+      "claim": "a chair",
+      "y_hall": 1,
+      "siglip-whole": 0.6043617777865041,
+      "v3-siglip": 0.6395317800126371,
+      "chance": 0.5,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000465346",
+      "claim": "a sandwich",
+      "y_hall": 0,
+      "siglip-whole": 0.23972830176353455,
+      "v3-siglip": 0.2826737330842772,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000572075",
+      "claim": "a toilet",
+      "y_hall": 0,
+      "siglip-whole": 0.262448288500309,
+      "v3-siglip": 0.29127426238204146,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000353180",
+      "claim": "a bus",
+      "y_hall": 0,
+      "siglip-whole": 0.3030342933806506,
+      "v3-siglip": 0.36254713728319055,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000211674",
+      "claim": "a chair",
+      "y_hall": 1,
+      "siglip-whole": 0.6222008595412427,
+      "v3-siglip": 0.6283465594160386,
+      "chance": 0.5,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000007320",
+      "claim": "a tv",
+      "y_hall": 0,
+      "siglip-whole": 0.22904528677463531,
+      "v3-siglip": 0.2675247984336583,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000257327",
+      "claim": "a bottle",
+      "y_hall": 0,
+      "siglip-whole": 0.6445001594044946,
+      "v3-siglip": 0.6585457470034611,
+      "chance": 0.5,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000534121",
+      "claim": "a dining table",
+      "y_hall": 1,
+      "siglip-whole": 0.45525801147926936,
+      "v3-siglip": 0.4764362092431225,
+      "chance": 0.5,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000098493",
+      "claim": "a handbag",
+      "y_hall": 1,
+      "siglip-whole": 0.5269458766349338,
+      "v3-siglip": 0.5229424085028544,
+      "chance": 0.5,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000456178",
+      "claim": "a clock",
+      "y_hall": 0,
+      "siglip-whole": 0.06460267576304346,
+      "v3-siglip": 0.11667450457136314,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000088507",
+      "claim": "a dining table",
+      "y_hall": 1,
+      "siglip-whole": 0.7364516861059449,
+      "v3-siglip": 0.7782235145909344,
+      "chance": 0.5,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000465346",
+      "claim": "a sandwich",
+      "y_hall": 0,
+      "siglip-whole": 0.23972830176353455,
+      "v3-siglip": 0.2826737330842772,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000572075",
+      "claim": "a toilet",
+      "y_hall": 0,
+      "siglip-whole": 0.262448288500309,
+      "v3-siglip": 0.29127426238204146,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000353180",
+      "claim": "a bus",
+      "y_hall": 0,
+      "siglip-whole": 0.3030342933806506,
+      "v3-siglip": 0.36254713728319055,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000211674",
+      "claim": "a vase",
+      "y_hall": 1,
+      "siglip-whole": 0.7914619980887934,
+      "v3-siglip": 0.8410378440510153,
+      "chance": 0.5,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000007320",
+      "claim": "a tv",
+      "y_hall": 0,
+      "siglip-whole": 0.22904528677463531,
+      "v3-siglip": 0.2675247984336583,
+      "chance": 0.5,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000257327",
+      "claim": "a bottle",
+      "y_hall": 0,
+      "siglip-whole": 0.6445001594044946,
+      "v3-siglip": 0.6585457470034611,
+      "chance": 0.5,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000534121",
+      "claim": "a dining table",
+      "y_hall": 1,
+      "siglip-whole": 0.45525801147926936,
+      "v3-siglip": 0.4764362092431225,
+      "chance": 0.5,
+      "v3-siglip_verdict": "unresolved"
+    }
+  ]
+}

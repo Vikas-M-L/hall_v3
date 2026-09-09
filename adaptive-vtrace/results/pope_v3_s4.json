@@ -1,0 +1,408 @@
+{
+  "siglip-whole": {
+    "random": {
+      "n": 10,
+      "auroc": 0.88,
+      "auprc": 0.925,
+      "auroc_ci95": [
+        0.583,
+        1.0
+      ],
+      "f1": 0.6666666666666666,
+      "precision": 0.5714285714285714,
+      "recall": 0.8,
+      "accuracy": 0.6,
+      "threshold": 0.5
+    },
+    "popular": {
+      "n": 10,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "auroc_ci95": [
+        1.0,
+        1.0
+      ],
+      "f1": 0.7692307692307693,
+      "precision": 0.625,
+      "recall": 1.0,
+      "accuracy": 0.7,
+      "threshold": 0.5
+    },
+    "adversarial": {
+      "n": 10,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "auroc_ci95": [
+        1.0,
+        1.0
+      ],
+      "f1": 0.7692307692307693,
+      "precision": 0.625,
+      "recall": 1.0,
+      "accuracy": 0.7,
+      "threshold": 0.5
+    },
+    "all": {
+      "n": 30,
+      "auroc": 0.96,
+      "auprc": 0.9749999999999999,
+      "auroc_ci95": [
+        0.856,
+        1.0
+      ],
+      "f1": 0.7368421052631579,
+      "precision": 0.6086956521739131,
+      "recall": 0.9333333333333333,
+      "accuracy": 0.6666666666666666,
+      "threshold": 0.5
+    }
+  },
+  "v3-siglip": {
+    "random": {
+      "n": 10,
+      "auroc": 0.88,
+      "auprc": 0.925,
+      "auroc_ci95": [
+        0.583,
+        1.0
+      ],
+      "f1": 0.7692307692307693,
+      "precision": 0.625,
+      "recall": 1.0,
+      "accuracy": 0.7,
+      "threshold": 0.5,
+      "coverage": 0.4,
+      "decisive_acc": 1.0,
+      "n_unresolved": 6
+    },
+    "popular": {
+      "n": 10,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "auroc_ci95": [
+        1.0,
+        1.0
+      ],
+      "f1": 0.7692307692307693,
+      "precision": 0.625,
+      "recall": 1.0,
+      "accuracy": 0.7,
+      "threshold": 0.5,
+      "coverage": 0.5,
+      "decisive_acc": 1.0,
+      "n_unresolved": 5
+    },
+    "adversarial": {
+      "n": 10,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "auroc_ci95": [
+        1.0,
+        1.0
+      ],
+      "f1": 0.7692307692307693,
+      "precision": 0.625,
+      "recall": 1.0,
+      "accuracy": 0.7,
+      "threshold": 0.5,
+      "coverage": 0.5,
+      "decisive_acc": 1.0,
+      "n_unresolved": 5
+    },
+    "all": {
+      "n": 30,
+      "auroc": 0.96,
+      "auprc": 0.975,
+      "auroc_ci95": [
+        0.856,
+        1.0
+      ],
+      "f1": 0.7692307692307693,
+      "precision": 0.625,
+      "recall": 1.0,
+      "accuracy": 0.7,
+      "threshold": 0.5,
+      "coverage": 0.4666666666666667,
+      "decisive_acc": 1.0,
+      "n_unresolved": 16
+    }
+  },
+  "_meta": {
+    "n_per_split": 10,
+    "seed": 4,
+    "seconds": 130.1,
+    "note": "claims parsed from POPE questions; no VLM responses (needs API key/GPU). y_hall=1 when POPE answer is no."
+  },
+  "_claims": [
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000397705",
+      "claim": "a truck",
+      "y_hall": 1,
+      "siglip-whole": 0.7730854627760974,
+      "v3-siglip": 0.7588786876226352,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000246999",
+      "claim": "a tv",
+      "y_hall": 0,
+      "siglip-whole": 0.35171049426902423,
+      "v3-siglip": 0.3728155761785117,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000560744",
+      "claim": "a spoon",
+      "y_hall": 0,
+      "siglip-whole": 0.5423304746774109,
+      "v3-siglip": 0.5711343860716579,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000217397",
+      "claim": "a tv",
+      "y_hall": 1,
+      "siglip-whole": 0.4864559715444391,
+      "v3-siglip": 0.5019520374068713,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000307166",
+      "claim": "a parking meter",
+      "y_hall": 1,
+      "siglip-whole": 0.8794952983205968,
+      "v3-siglip": 0.8321195096120924,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000472375",
+      "claim": "a giraffe",
+      "y_hall": 1,
+      "siglip-whole": 0.634352240034125,
+      "v3-siglip": 0.6507887432942225,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000298633",
+      "claim": "a toothbrush",
+      "y_hall": 1,
+      "siglip-whole": 0.7153975306586786,
+      "v3-siglip": 0.6850930241069844,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000418680",
+      "claim": "a snowboard",
+      "y_hall": 0,
+      "siglip-whole": 0.08230572938919067,
+      "v3-siglip": 0.15291302370773074,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000329717",
+      "claim": "a handbag",
+      "y_hall": 0,
+      "siglip-whole": 0.5091217256743799,
+      "v3-siglip": 0.5494460457514937,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "random",
+      "image": "COCO_val2014_000000088507",
+      "claim": "a person",
+      "y_hall": 0,
+      "siglip-whole": 0.578398142687299,
+      "v3-siglip": 0.5773266583453116,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000397705",
+      "claim": "a dining table",
+      "y_hall": 1,
+      "siglip-whole": 0.6493734148415652,
+      "v3-siglip": 0.6875264134338925,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000246999",
+      "claim": "a tv",
+      "y_hall": 0,
+      "siglip-whole": 0.35171049426902423,
+      "v3-siglip": 0.3728155761785117,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000560744",
+      "claim": "a spoon",
+      "y_hall": 0,
+      "siglip-whole": 0.5423304746774109,
+      "v3-siglip": 0.5711343860716579,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000217397",
+      "claim": "a car",
+      "y_hall": 1,
+      "siglip-whole": 0.7288458455692638,
+      "v3-siglip": 0.6957356464629393,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000307166",
+      "claim": "a chair",
+      "y_hall": 1,
+      "siglip-whole": 0.6620545654811643,
+      "v3-siglip": 0.6987991813070911,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000472375",
+      "claim": "a person",
+      "y_hall": 1,
+      "siglip-whole": 0.6443545005538247,
+      "v3-siglip": 0.6285252578935241,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000298633",
+      "claim": "a chair",
+      "y_hall": 1,
+      "siglip-whole": 0.7033553265712478,
+      "v3-siglip": 0.7331147630461096,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000418680",
+      "claim": "a snowboard",
+      "y_hall": 0,
+      "siglip-whole": 0.08230572938919067,
+      "v3-siglip": 0.15291302370773074,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000329717",
+      "claim": "a handbag",
+      "y_hall": 0,
+      "siglip-whole": 0.5091217256743799,
+      "v3-siglip": 0.5494460457514937,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "popular",
+      "image": "COCO_val2014_000000088507",
+      "claim": "a person",
+      "y_hall": 0,
+      "siglip-whole": 0.578398142687299,
+      "v3-siglip": 0.5773266583453116,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000397705",
+      "claim": "a car",
+      "y_hall": 1,
+      "siglip-whole": 0.7051728449084542,
+      "v3-siglip": 0.6832215496288617,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000246999",
+      "claim": "a tv",
+      "y_hall": 0,
+      "siglip-whole": 0.35171049426902423,
+      "v3-siglip": 0.3728155761785117,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000560744",
+      "claim": "a spoon",
+      "y_hall": 0,
+      "siglip-whole": 0.5423304746774109,
+      "v3-siglip": 0.5711343860716579,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000217397",
+      "claim": "a car",
+      "y_hall": 1,
+      "siglip-whole": 0.7288458455692638,
+      "v3-siglip": 0.6957356464629393,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000307166",
+      "claim": "a spoon",
+      "y_hall": 1,
+      "siglip-whole": 0.6288990838961168,
+      "v3-siglip": 0.6646297208138068,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000472375",
+      "claim": "a person",
+      "y_hall": 1,
+      "siglip-whole": 0.6443545005538247,
+      "v3-siglip": 0.6285252578935241,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000298633",
+      "claim": "a chair",
+      "y_hall": 1,
+      "siglip-whole": 0.7033553265712478,
+      "v3-siglip": 0.7331147630461096,
+      "v3-siglip_verdict": "contradicted"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000418680",
+      "claim": "a snowboard",
+      "y_hall": 0,
+      "siglip-whole": 0.08230572938919067,
+      "v3-siglip": 0.15291302370773074,
+      "v3-siglip_verdict": "supported"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000329717",
+      "claim": "a handbag",
+      "y_hall": 0,
+      "siglip-whole": 0.5091217256743799,
+      "v3-siglip": 0.5494460457514937,
+      "v3-siglip_verdict": "unresolved"
+    },
+    {
+      "split": "adversarial",
+      "image": "COCO_val2014_000000088507",
+      "claim": "a person",
+      "y_hall": 0,
+      "siglip-whole": 0.578398142687299,
+      "v3-siglip": 0.5773266583453116,
+      "v3-siglip_verdict": "unresolved"
+    }
+  ]
+}

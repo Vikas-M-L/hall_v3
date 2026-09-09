@@ -134,6 +134,14 @@ diagonal (Fig.~\ref{fig:gbm}); VLM judge scores 16/17 (0.941). True/false
 control margin: 0.894 (So400M), 0.79 (SigLIP-base), 0.28 (B/32). Gallery over
 seven hallucination types: pairwise ranking 6/7.
 
+\textbf{v3 calibrated abstention (headline).} Same POPE items, same SigLIP
+model, three-state verdicts. Seeds 3/4 (n=30 each): v1 forced accuracy
+0.800/0.667; v3 coverage 0.67/0.47 with accuracy on decided claims
+\textbf{1.000/1.000}, abstaining on 10/16. v3 issued no wrong decisive verdict
+on these runs: abstention converts errors into review requests instead of
+hiding them. Bare-noun POPE claims make claim-vs-denial margins tiny (shared
+content words), so ties fall back to the base match when it is decisive.
+
 \begin{table}[htbp]
 \caption{Main results (real measurements; CIs in appendix runs). Bold = best.}
 \label{tab:main}

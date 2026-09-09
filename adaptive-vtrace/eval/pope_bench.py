@@ -65,6 +65,9 @@ METHODS = {
                      "grid": 1, "window": (-0.10, 0.12)},
     "clipB32-grid": {"checkpoint": "openai/clip-vit-base-patch32",
                      "grid": 3, "window": (0.15, 0.35)},
+    # v3: pairwise claim-vs-counterclaim + abstention (same SigLIP, whole image).
+    "v3-siglip": {"checkpoint": "google/siglip-base-patch16-224",
+                  "grid": 1, "window": (-0.10, 0.12), "v3": True},
     "chance": None,
 }
 
@@ -78,24 +81,46 @@ def make_clip(checkpoint: str, window):
                                  "cos_min": window[0], "cos_max": window[1]}})
 
 
-def score_all(rows: list[dict], methods: list[str]) -> dict[str, list[float]]:
+def score_all(rows: list[dict], methods: list[str]) -> tuple[dict, dict]:
+    """Returns (risks per method, verdicts per method — v3 only)."""
     import numpy as np
 
     risks: dict[str, list[float]] = {m: [] for m in methods}
-    clips = {m: make_clip(**{k: v for k, v in METHODS[m].items() if k != "grid"})
+    verdicts: dict[str, list[str | None]] = {m: [] for m in methods}
+    clips = {m: make_clip(**{k: v for k, v in METHODS[m].items()
+                             if k not in ("grid", "v3")})
              for m in methods if METHODS[m] is not None}
+    from fusion.negation import make_counterclaim
+    from fusion.vtrace_fusion import SignalBundle, fuse
+
+    active = {"confidence": False, "evidence": True, "clip_similarity": True,
+              "uniprobe": False, "counterfactual": False}
     for i, row in enumerate(rows):
         print(f"[{i + 1}/{len(rows)}] {row['image_id']} {row['claim'][:50]}", flush=True)
         for m in methods:
             spec = METHODS[m]
             if spec is None:
                 risks[m].append(0.5)
+                verdicts[m].append(None)
                 continue
             clip = clips[m]
             regions = clip.encode_regions(row["image"], grid=spec["grid"])
             score, _, _ = clip.evidence(row["claim"], regions)
-            risks[m].append(float(1.0 - score) if score == score else float("nan"))
-    return risks
+            if spec.get("v3"):
+                sim = clip.similarity(row["claim"], regions)
+                cc = make_counterclaim(row["claim"])
+                pw = clip.pairwise_scores(row["claim"], cc["counterclaim_text"], regions)
+                r = fuse(SignalBundle(claim_text=row["claim"], evidence=score,
+                                      clip_similarity=sim,
+                                      stubbed=("uniprobe", "counterfactual")),
+                         mode="v3", active_signals=active, drop_stubbed=True,
+                         pairwise=pw)
+                risks[m].append(float(r.risk) if r.risk == r.risk else float("nan"))
+                verdicts[m].append(r.verdict)
+            else:
+                risks[m].append(float(1.0 - score) if score == score else float("nan"))
+                verdicts[m].append(None)
+    return risks, verdicts
 
 
 def main() -> int:
@@ -115,10 +140,13 @@ def main() -> int:
 
     from eval.metrics import auprc, auroc, f1_at_threshold
 
-    risks = score_all(rows, args.methods)
+    risks, verdicts = score_all(rows, args.methods)
     claims_dump = [{"split": rows[i]["split"], "image": rows[i]["image_id"],
                     "claim": rows[i]["claim"], "y_hall": rows[i]["y_hall"],
-                    **{m: risks[m][i] for m in args.methods}} for i in range(len(rows))]
+                    **{m: risks[m][i] for m in args.methods},
+                    **{f"{m}_verdict": verdicts[m][i] for m in args.methods
+                       if any(v is not None for v in verdicts[m])}}
+                   for i in range(len(rows))]
 
     def _bca_auroc(y, sc, n_boot=500, seed=0):
         """Bootstrap 95% CI for AUROC (resample items, stratified-ish)."""
@@ -151,6 +179,16 @@ def main() -> int:
             table[m][s] = {"n": len(y), "auroc": auroc(y, sc), "auprc": auprc(y, sc),
                            "auroc_ci95": list(_bca_auroc(y, sc)),
                            **f1_at_threshold(y, sc)}
+            # v3 three-state metrics: coverage + accuracy on decisive claims only.
+            vs = [verdicts[m][i] for i in idx]
+            if any(v is not None for v in vs):
+                dec = [(yy, v) for yy, v in zip([rows[i]["y_hall"] for i in idx], vs)
+                       if v in ("supported", "contradicted")]
+                table[m][s]["coverage"] = len(dec) / max(1, len(idx))
+                table[m][s]["decisive_acc"] = (
+                    sum(1 for yy, v in dec if (v == "contradicted") == bool(yy))
+                    / len(dec)) if dec else float("nan")
+                table[m][s]["n_unresolved"] = sum(1 for v in vs if v == "unresolved")
     table["_meta"] = {"n_per_split": args.n_per_split, "seed": args.seed,
                       "seconds": round(time.time() - t0, 1),
                       "note": "claims parsed from POPE questions; no VLM responses "
