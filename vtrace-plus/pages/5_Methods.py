@@ -7,6 +7,9 @@ import studio_lib as L
 
 st.set_page_config(page_title="Methods — V-TRACE+ Studio", layout="wide")
 st.markdown(L.CSS, unsafe_allow_html=True)
+st.warning("Historical methods overview. The research audit supersedes accuracy, "
+           "novelty and cost claims below. Diagnosis labels are hypotheses; "
+           "independent repair validation is still required.")
 st.markdown("<div class='hero-title'>How it <span class='grad'>works</span></div>",
             unsafe_allow_html=True)
 
@@ -30,10 +33,10 @@ st.markdown("v1 = equal weights. v2 = Rule 1 (confident-but-ungrounded leans on 
             "Without VLM confidence, v2 ≈ v1.")
 
 st.subheader("Cost-aware cascade")
-st.markdown("Free CLIP signals decide easy claims; VLM calls fire only on ambiguity "
-            "(uncertain band, or all claims in max-accuracy mode). Measured frontier: "
-            "full accuracy at ~4–13% of VLM-pass cost (synthetic proof; GPU run pending). "
-            "Every Studio run reports its cascade savings.")
+st.markdown("The prototype can select uncertain claims for API cross-checking. "
+            "The earlier 4–13% cost figure used assumed synthetic costs and full-stack "
+            "outputs; it is not evidence of real savings. Research telemetry now records "
+            "actual API stages separately from replay and local scoring.")
 
 st.subheader("Honest limits")
 st.markdown("* Binding ('gold cat'), counting without the detector, OCR, tiny objects\n"
@@ -41,7 +44,8 @@ st.markdown("* Binding ('gold cat'), counting without the detector, OCR, tiny ob
             "* Thresholds provisional (n≈33); n=9000 needs a GPU\n"
             "* No SDXL/LoRA/fine-tuning anywhere — inference-time detector by design")
 
-st.subheader("Novelty (self-rating)")
-st.markdown("Reframe 8 · routing design 9 · empirical proof 5 · engineering 9 → "
-            "**7/10**. The remaining points need a GPU: full POPE, trained two-stage "
-            "classifier on real features, routing-vs-policy on natural outcomes.")
+st.subheader("Research status")
+st.markdown("The novelty claim is unestablished. FaithScore, Woodpecker and VISOR "
+            "overlap the proposed contributions. The research question is whether "
+            "error-specific routing improves answer preservation at matched cost. "
+            "See literature_review.md, research_audit.md and FINAL_RESEARCH_ROADMAP.md.")

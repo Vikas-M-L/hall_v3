@@ -51,6 +51,14 @@ def main() -> int:
     ap.add_argument("--batch", type=int, default=4)
     args = ap.parse_args()
 
+    raise RuntimeError(
+        "Legacy LoRA prototype is quarantined by research_audit.md: overlapping "
+        "train/validation rows, unmasked prompt labels and incomplete multimodal "
+        "collation were found. No validated adapter training run exists. Use the "
+        "audited CPU diagnosis experiment until this trainer is repaired and "
+        "verified on a GPU; see configs/lora_protocol.json."
+    )
+
     import torch  # noqa: E402
     if not torch.cuda.is_available():
         raise RuntimeError("REFUSING to train on CPU: LoRA finetune needs CUDA. "

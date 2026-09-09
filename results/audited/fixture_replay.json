@@ -1,0 +1,523 @@
+{
+  "config": {
+    "status": "development",
+    "seed": 42,
+    "threshold": 0.5,
+    "model": "gemini-3.1-flash-lite",
+    "verifier_model": "gemini-3-flash-preview",
+    "max_calls": 10,
+    "timeout": 60,
+    "strategies": [
+      "original",
+      "detector_only",
+      "uniform_self_correction",
+      "detect_then_fixed",
+      "type_routing",
+      "random_router",
+      "routed_no_verifier",
+      "full",
+      "no_diagnosis"
+    ]
+  },
+  "config_sha256": "90ddbeb88f95422a900665855d4304be3e6f084510ac86aee9645863b6142692",
+  "input_sha256": "e4149bf40cdbcc3e675da390ecc99069a56e1d53acf20d7aac9690450295ab40",
+  "recording_sha256": "6f59da22847fb560252fa53b24e7c7cedaf349a159c400467d49c5275b2c125b",
+  "source_revision": "32ff2afa5d7f23ee389729489a8d75e0ac2cf33c",
+  "python": "3.11.7",
+  "source_hashes": {
+    "ablations.py": "4814ce83ded2504c61127359fbce5b14e40b54cfa7ed2fb15ea8d49d2d160f71",
+    "analyze.py": "f6569ff11abaafa89291b2e14756065cd3e15dc88874fb9e6974adab7e23eb89",
+    "backends.py": "b368ec791bd863b2f559c4ffc35ded0a9e525b763adca10fd56fc842aab450c8",
+    "calibration.py": "0a9250f627586959fbe276fb535196ee3633d52073e250c9be1f147366997c0e",
+    "collect.py": "56ef07ff4fe0d8726c31827ea738051dc8226963f640c3a311bff2d4862597c0",
+    "core.py": "12c04d9aff50751b32d77c8798cecb99ea8444a1928b361694ebf9ba1f01ed05",
+    "inventory.py": "22f74babc974ac2a265746fc87c68a691bf830ebd9bc54b94be433c78e7dcb48",
+    "make_fixture.py": "650d05273a2b2195c239ec3e40994fe5b837172da35bf219278719636aa9a2e3",
+    "prepare_dataset.py": "6ac5fedaa42245dc09658e06a7dcd2128323384ebbf696c362645cc5755cb062",
+    "report_assets.py": "218047a6641cd04593e1d2ee5185e644426b27dc548b40ba081bc09f207bccbc",
+    "run.py": "8760912e1ab398c12d160a036f7dd3a9bd0c66954a3a0767081b99d4544665d3",
+    "score_repairs.py": "70b89c054cfc12220cd849ad7fb96126c221049a64f28c561cdfc886a10f9558",
+    "seal.py": "422bd8997a2c5c04220a123335c589c1bdc1e273ba795003f99d24a66a00cf43",
+    "statistics.py": "af3517441394eee123b057793878a219b07d8e155bf3d74f3d243a192aea27eb",
+    "synthetic_diagnosis.py": "34717d4c761d67a472607533f27bae1d07d14cbdae69bad35c61394b8186a0e2",
+    "telemetry.py": "6b061c5cf2616d6883571f6c31b75651134a250eb34cb678776bbc6c5eb4dcab",
+    "train_diagnosis.py": "133235a2b3a6ed2c08aa7d247f9c91f1b3117203b69fcf38c0eac80be67b267b",
+    "__init__.py": "f7e2bf6442ab87460e05d2ac2410bc28b6d755e30168940f9f9a943f8288a454"
+  },
+  "platform": "Windows-10-10.0.26200-SP0",
+  "prompts": {
+    "generate": "Answer the user question using only visible image evidence. Return JSON {\"response\":\"answer\"}. State uncertainty when the image is insufficient.",
+    "detect": "Inspect the image, user question and original response. Return JSON: {\"claims\":[{\"text\":\"atomic assertion\", \"source\":\"exact response substring\", \"type\":\"object|attribute|relation|counting|spatial|ocr|reasoning|knowledge|unsupported_inference|grounding|unknown\", \"risk\":0.5,\"verdict\":\"supported|contradicted|unresolved\",\"reason\":\"visual evidence or limitation\"}]}. Risk is your uncertainty estimate, not a ground-truth probability. Do not treat the user's assertions as facts.",
+    "repair": "Reinspect the image and correct the response to the original question. Use the specified action to focus verification; supplied evidence is fallible. Return JSON {\"response\":\"complete corrected answer\"}. Preserve supported details; do not add guesses.",
+    "verify": "Independently inspect the image, question and candidate response. Return JSON {\"supported\":true, \"answers_question\":true, \"reason\":\"explanation\"}. Use false when contradicted or incomplete, null when unverifiable. Do not approve omission of information required by the question."
+  },
+  "inventory": {
+    "n": 1,
+    "groups": 1,
+    "images": 1
+  },
+  "live": false,
+  "total_seconds": 0.09958360000018729,
+  "memory": {
+    "sampled_peak_client_rss_bytes": 26181632,
+    "sample_count": 2,
+    "sample_interval_seconds": 0.05,
+    "note": "sampled client RSS; may miss short peaks; excludes remote server memory"
+  },
+  "traces": [
+    {
+      "id": "fixture-count",
+      "group_id": "fixture-scene",
+      "split": "fixture",
+      "strategy": "original",
+      "seed": 42,
+      "original_response": "There are three cats.",
+      "final_response": "There are three cats.",
+      "status": "kept_original",
+      "action": "accept",
+      "candidate": null,
+      "detection": null,
+      "verification": null,
+      "events": [],
+      "wall_seconds": 8.699998943484388e-06
+    },
+    {
+      "id": "fixture-count",
+      "group_id": "fixture-scene",
+      "split": "fixture",
+      "strategy": "detector_only",
+      "seed": 42,
+      "original_response": "There are three cats.",
+      "final_response": "There are three cats.",
+      "status": "kept_original",
+      "action": "accept",
+      "candidate": null,
+      "detection": {
+        "claims": [
+          {
+            "text": "There are three cats.",
+            "source": "three cats",
+            "risk": 0.9,
+            "type": "counting",
+            "verdict": "contradicted",
+            "reason": "synthetic fixture evidence, not a model prediction",
+            "span": [
+              10,
+              20
+            ]
+          }
+        ]
+      },
+      "verification": null,
+      "risk": 0.9,
+      "events": [
+        {
+          "key": "a024f2d30db7b4d3b7e7cf6d7f6e1756a83cd231b0569502d7d212aa9a5b6592",
+          "stage": "detect",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        }
+      ],
+      "wall_seconds": 0.00017140000090876129
+    },
+    {
+      "id": "fixture-count",
+      "group_id": "fixture-scene",
+      "split": "fixture",
+      "strategy": "uniform_self_correction",
+      "seed": 42,
+      "original_response": "There are three cats.",
+      "final_response": "There are two cats.",
+      "status": "accepted_repair",
+      "action": "visual_recheck",
+      "candidate": "There are two cats.",
+      "detection": {
+        "claims": [
+          {
+            "text": "There are three cats.",
+            "source": "three cats",
+            "risk": 0.9,
+            "type": "counting",
+            "verdict": "contradicted",
+            "reason": "synthetic fixture evidence, not a model prediction",
+            "span": [
+              10,
+              20
+            ]
+          }
+        ]
+      },
+      "verification": {
+        "supported": true,
+        "answers_question": true,
+        "reason": "fixture"
+      },
+      "risk": 0.9,
+      "events": [
+        {
+          "key": "a024f2d30db7b4d3b7e7cf6d7f6e1756a83cd231b0569502d7d212aa9a5b6592",
+          "stage": "detect",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        },
+        {
+          "key": "47efc886635d7a95f18f8c90bac3fc1ee2a021820632ebb672a905f3cdddedf9",
+          "stage": "repair",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        },
+        {
+          "key": "5b4fcd17383ae19d378d964455d71c01cb0b120987f72559ea5a6920d7611bcf",
+          "stage": "verify",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        }
+      ],
+      "wall_seconds": 0.00011320000157866161
+    },
+    {
+      "id": "fixture-count",
+      "group_id": "fixture-scene",
+      "split": "fixture",
+      "strategy": "detect_then_fixed",
+      "seed": 42,
+      "original_response": "There are three cats.",
+      "final_response": "There are two cats.",
+      "status": "accepted_repair",
+      "action": "visual_recheck",
+      "candidate": "There are two cats.",
+      "detection": {
+        "claims": [
+          {
+            "text": "There are three cats.",
+            "source": "three cats",
+            "risk": 0.9,
+            "type": "counting",
+            "verdict": "contradicted",
+            "reason": "synthetic fixture evidence, not a model prediction",
+            "span": [
+              10,
+              20
+            ]
+          }
+        ]
+      },
+      "verification": {
+        "supported": true,
+        "answers_question": true,
+        "reason": "fixture"
+      },
+      "risk": 0.9,
+      "events": [
+        {
+          "key": "a024f2d30db7b4d3b7e7cf6d7f6e1756a83cd231b0569502d7d212aa9a5b6592",
+          "stage": "detect",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        },
+        {
+          "key": "47efc886635d7a95f18f8c90bac3fc1ee2a021820632ebb672a905f3cdddedf9",
+          "stage": "repair",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        },
+        {
+          "key": "5b4fcd17383ae19d378d964455d71c01cb0b120987f72559ea5a6920d7611bcf",
+          "stage": "verify",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        }
+      ],
+      "wall_seconds": 8.38999985717237e-05
+    },
+    {
+      "id": "fixture-count",
+      "group_id": "fixture-scene",
+      "split": "fixture",
+      "strategy": "type_routing",
+      "seed": 42,
+      "original_response": "There are three cats.",
+      "final_response": "There are two cats.",
+      "status": "accepted_repair",
+      "action": "visual_recheck",
+      "candidate": "There are two cats.",
+      "detection": {
+        "claims": [
+          {
+            "text": "There are three cats.",
+            "source": "three cats",
+            "risk": 0.9,
+            "type": "counting",
+            "verdict": "contradicted",
+            "reason": "synthetic fixture evidence, not a model prediction",
+            "span": [
+              10,
+              20
+            ]
+          }
+        ]
+      },
+      "verification": {
+        "supported": true,
+        "answers_question": true,
+        "reason": "fixture"
+      },
+      "risk": 0.9,
+      "events": [
+        {
+          "key": "a024f2d30db7b4d3b7e7cf6d7f6e1756a83cd231b0569502d7d212aa9a5b6592",
+          "stage": "detect",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        },
+        {
+          "key": "47efc886635d7a95f18f8c90bac3fc1ee2a021820632ebb672a905f3cdddedf9",
+          "stage": "repair",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        },
+        {
+          "key": "5b4fcd17383ae19d378d964455d71c01cb0b120987f72559ea5a6920d7611bcf",
+          "stage": "verify",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        }
+      ],
+      "wall_seconds": 0.00016140000116138253
+    },
+    {
+      "id": "fixture-count",
+      "group_id": "fixture-scene",
+      "split": "fixture",
+      "strategy": "random_router",
+      "seed": 42,
+      "original_response": "There are three cats.",
+      "final_response": null,
+      "status": "abstained",
+      "action": "abstain",
+      "candidate": null,
+      "detection": {
+        "claims": [
+          {
+            "text": "There are three cats.",
+            "source": "three cats",
+            "risk": 0.9,
+            "type": "counting",
+            "verdict": "contradicted",
+            "reason": "synthetic fixture evidence, not a model prediction",
+            "span": [
+              10,
+              20
+            ]
+          }
+        ]
+      },
+      "verification": null,
+      "risk": 0.9,
+      "events": [
+        {
+          "key": "a024f2d30db7b4d3b7e7cf6d7f6e1756a83cd231b0569502d7d212aa9a5b6592",
+          "stage": "detect",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        }
+      ],
+      "wall_seconds": 6.500000017695129e-05
+    },
+    {
+      "id": "fixture-count",
+      "group_id": "fixture-scene",
+      "split": "fixture",
+      "strategy": "routed_no_verifier",
+      "seed": 42,
+      "original_response": "There are three cats.",
+      "final_response": "There are two cats.",
+      "status": "accepted_unverified",
+      "action": "recount",
+      "candidate": "There are two cats.",
+      "detection": {
+        "claims": [
+          {
+            "text": "There are three cats.",
+            "source": "three cats",
+            "risk": 0.9,
+            "type": "counting",
+            "verdict": "contradicted",
+            "reason": "synthetic fixture evidence, not a model prediction",
+            "span": [
+              10,
+              20
+            ]
+          }
+        ]
+      },
+      "verification": null,
+      "risk": 0.9,
+      "events": [
+        {
+          "key": "a024f2d30db7b4d3b7e7cf6d7f6e1756a83cd231b0569502d7d212aa9a5b6592",
+          "stage": "detect",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        },
+        {
+          "key": "79b5375531c38f56b27c96f8b66ba68d6221b6e70402ea209501945f17c06b31",
+          "stage": "repair",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        }
+      ],
+      "wall_seconds": 6.459999895014334e-05
+    },
+    {
+      "id": "fixture-count",
+      "group_id": "fixture-scene",
+      "split": "fixture",
+      "strategy": "full",
+      "seed": 42,
+      "original_response": "There are three cats.",
+      "final_response": "There are two cats.",
+      "status": "accepted_repair",
+      "action": "recount",
+      "candidate": "There are two cats.",
+      "detection": {
+        "claims": [
+          {
+            "text": "There are three cats.",
+            "source": "three cats",
+            "risk": 0.9,
+            "type": "counting",
+            "verdict": "contradicted",
+            "reason": "synthetic fixture evidence, not a model prediction",
+            "span": [
+              10,
+              20
+            ]
+          }
+        ]
+      },
+      "verification": {
+        "supported": true,
+        "answers_question": true,
+        "reason": "fixture"
+      },
+      "risk": 0.9,
+      "events": [
+        {
+          "key": "a024f2d30db7b4d3b7e7cf6d7f6e1756a83cd231b0569502d7d212aa9a5b6592",
+          "stage": "detect",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        },
+        {
+          "key": "79b5375531c38f56b27c96f8b66ba68d6221b6e70402ea209501945f17c06b31",
+          "stage": "repair",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        },
+        {
+          "key": "5b4fcd17383ae19d378d964455d71c01cb0b120987f72559ea5a6920d7611bcf",
+          "stage": "verify",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        }
+      ],
+      "wall_seconds": 6.849999954283703e-05
+    },
+    {
+      "id": "fixture-count",
+      "group_id": "fixture-scene",
+      "split": "fixture",
+      "strategy": "no_diagnosis",
+      "seed": 42,
+      "original_response": "There are three cats.",
+      "final_response": "There are two cats.",
+      "status": "accepted_repair",
+      "action": "visual_recheck",
+      "candidate": "There are two cats.",
+      "detection": {
+        "claims": [
+          {
+            "text": "There are three cats.",
+            "source": "three cats",
+            "risk": 0.9,
+            "type": "counting",
+            "verdict": "contradicted",
+            "reason": "synthetic fixture evidence, not a model prediction",
+            "span": [
+              10,
+              20
+            ]
+          }
+        ]
+      },
+      "verification": {
+        "supported": true,
+        "answers_question": true,
+        "reason": "fixture"
+      },
+      "risk": 0.9,
+      "events": [
+        {
+          "key": "a024f2d30db7b4d3b7e7cf6d7f6e1756a83cd231b0569502d7d212aa9a5b6592",
+          "stage": "detect",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        },
+        {
+          "key": "b3d6ac35e53206ca0d0f4d8dfbdc3db55d17f8bfa34c535e3a59acf40d4e3817",
+          "stage": "repair",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        },
+        {
+          "key": "5b4fcd17383ae19d378d964455d71c01cb0b120987f72559ea5a6920d7611bcf",
+          "stage": "verify",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": null,
+          "recorded_seconds": null
+        }
+      ],
+      "wall_seconds": 7.480000022042077e-05
+    }
+  ],
+  "errors": [],
+  "scientific_status": "unscored; independent adjudication required"
+}

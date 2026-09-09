@@ -54,6 +54,12 @@ def test_taxonomy_has_m4():
     assert MECHANISMS == ("M0", "M1", "M2", "M3", "M4")
 
 
+def test_refutation_is_not_ignored_when_clip_risk_is_low():
+    result = diagnose(0.1, 0.1, 0.1, vlm_supported=False)
+    assert result["mechanism"] != "M0"
+    assert "VLM directly refuted the claim" in result["reasons"]
+
+
 if __name__ == "__main__":
     fns = [(n, f) for n, f in sorted(globals().items()) if n.startswith("test_")]
     failed = 0

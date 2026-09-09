@@ -11,9 +11,9 @@ st.set_page_config(page_title="Cascade — V-TRACE+ Studio", layout="wide")
 st.markdown(L.CSS, unsafe_allow_html=True)
 st.markdown("<div class='hero-title'>Verification <span class='grad'>Cascade</span></div>",
             unsafe_allow_html=True)
-st.markdown("<div class='hero-sub'>Free CLIP signals decide easy claims; expensive VLM "
-            "calls fire only on ambiguity. Every number below is measured on real "
-            "POPE items — never claimed without data.</div>", unsafe_allow_html=True)
+st.markdown("<div class='hero-sub'>Exploratory threshold-selection analysis on saved "
+            "POPE compatibility scores. The rates below are hypothetical escalation "
+            "rates, not measured VLM calls or compute savings.</div>", unsafe_allow_html=True)
 
 pool: dict = {}
 import pathlib as _p
@@ -33,8 +33,8 @@ for tau in (0.3, 0.5, 0.6, 0.8):
     dec = [abs(r["siglip-whole"] - 0.5) * 2 >= tau for r in rows]
     out.append({"decisiveness threshold": tau,
                 "resolved by CLIP": f"{sum(dec)}/{len(rows)}",
-                "VLM calls avoided": f"{100 * sum(dec) / len(rows):.0f}%"})
+                "eligible for early selection (hypothetical)": f"{100 * sum(dec) / len(rows):.0f}%"})
 st.dataframe(_pd.DataFrame(out), use_container_width=True)
-st.info("Target (unclaimed until the GPU run): ≥95% of full-system detection quality "
-        "while using ≤15% of expensive VLM calls. The Studio already reports live "
-        "per-run savings under every verdict banner.")
+st.info("An efficiency claim requires actual attempted calls, tokens, latency and "
+        "independent answer-preservation outcomes at matched coverage. "
+        "See research/protocol.md and the recorded research smoke traces.")

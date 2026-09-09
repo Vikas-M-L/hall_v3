@@ -1,0 +1,6 @@
+{
+  "hallucination_reduction": "independent before/after labels absent",
+  "full_component_ablation": "only protocol arms/legacy encoder variants available",
+  "repair_routing_distribution_on_test": "no untouched annotated full-system test",
+  "fifty_manually_inspected_failures": "review queue created; no completed human annotations"
+}

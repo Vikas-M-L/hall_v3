@@ -127,9 +127,48 @@ class GeminiWrapper:
         raw = self._call([{"text": prompt}, _img_part(image)],
                          temperature=0.0, max_tokens=128).strip()
         first = (raw.split() or [""])[0].strip(".,:;\"'").upper()
-        if first.startswith("YES"):
+        if first == "YES":
             return {"supported": True, "raw": raw}
-        if first.startswith("NO"):
+        if first == "NO":
             return {"supported": False, "raw": raw}
         logger.warning("gemini verify unparseable: %r", raw[:80])
         return {"supported": None, "raw": raw}
+
+    def repair(self, image, response: str, question: str) -> str:
+        """Generate a candidate only; caller must verify before accepting it."""
+        prompt = ("Inspect the image and revise the draft to answer the question accurately. "
+                  "Preserve visible supported facts. Remove unsupported details; express uncertainty "
+                  "when needed. Return only the revised answer, no headings.\n"
+                  f"Question: {question}\nDraft (may contain errors): {response}")
+        candidate = self._call([{"text": prompt}, _img_part(image)], max_tokens=1024).strip()
+        if not candidate:
+            raise ValueError("Empty repair candidate")
+        return candidate
+
+    def verify_answer(self, image, response: str, question: str) -> dict:
+        prompt = ('Check the image and candidate against the original question. Return only JSON '
+                  '{"supported": true, "answers_question": true, "reason": "explanation"}. '
+                  'Use false for unsupported details or omitted required facts, null for uncertainty. '
+                  f'Question: {question}\nCandidate: {response}')
+        raw = self._call([{"text": prompt}, _img_part(image)], max_tokens=1024).strip()
+        try:
+            result = json.loads(raw.removeprefix("```json").removeprefix("```").removesuffix("```").strip())
+            if not isinstance(result, dict) or any(type(result.get(k)) not in (bool, type(None)) for k in ("supported", "answers_question")):
+                raise ValueError("Invalid verification flags")
+            return result
+        except (ValueError, TypeError):
+            return {"supported": None, "answers_question": None, "reason": "Verification response could not be parsed."}
+
+    def audit_preservation(self, payload: dict) -> dict:
+        """Text-only entailment audit, separate from visual truth verification."""
+        import sys
+        from pathlib import Path
+        root = str(Path(__file__).resolve().parents[2])
+        if root not in sys.path:
+            sys.path.insert(0, root)
+        from research.preservation import ALIGNMENT_PROMPT
+        raw = self._call([{"text": ALIGNMENT_PROMPT + "\n" + json.dumps(payload)}], max_tokens=4096).strip()
+        result = json.loads(raw.removeprefix("```json").removeprefix("```").removesuffix("```").strip())
+        if not isinstance(result, dict):
+            raise ValueError("Invalid preservation audit response")
+        return result

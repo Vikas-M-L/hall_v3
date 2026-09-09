@@ -1,0 +1,68 @@
+[
+  {
+    "run": "live_smoke",
+    "strategy": "original",
+    "status": "kept_original",
+    "logical_calls": 0,
+    "network_calls": 0,
+    "recorded_service_seconds": 0,
+    "tokens": 0,
+    "accuracy": null,
+    "note": "development smoke; replay service durations are historical, not new requests"
+  },
+  {
+    "run": "live_smoke",
+    "strategy": "uniform_self_correction",
+    "status": "accepted_repair",
+    "logical_calls": 3,
+    "network_calls": 3,
+    "recorded_service_seconds": 16.044023099999322,
+    "tokens": 4897,
+    "accuracy": null,
+    "note": "development smoke; replay service durations are historical, not new requests"
+  },
+  {
+    "run": "live_smoke",
+    "strategy": "full",
+    "status": "kept_original",
+    "logical_calls": 1,
+    "network_calls": 0,
+    "recorded_service_seconds": 4.185355800000252,
+    "tokens": 1620,
+    "accuracy": null,
+    "note": "development smoke; replay service durations are historical, not new requests"
+  },
+  {
+    "run": "controlled_edit_smoke",
+    "strategy": "original",
+    "status": "kept_original",
+    "logical_calls": 0,
+    "network_calls": 0,
+    "recorded_service_seconds": 0,
+    "tokens": 0,
+    "accuracy": null,
+    "note": "development smoke; replay service durations are historical, not new requests"
+  },
+  {
+    "run": "controlled_edit_smoke",
+    "strategy": "uniform_self_correction",
+    "status": "accepted_repair",
+    "logical_calls": 3,
+    "network_calls": 3,
+    "recorded_service_seconds": 13.716259500000888,
+    "tokens": 4857,
+    "accuracy": null,
+    "note": "development smoke; replay service durations are historical, not new requests"
+  },
+  {
+    "run": "controlled_edit_smoke",
+    "strategy": "full",
+    "status": "accepted_repair",
+    "logical_calls": 3,
+    "network_calls": 1,
+    "recorded_service_seconds": 13.355746799999906,
+    "tokens": 4854,
+    "accuracy": null,
+    "note": "development smoke; replay service durations are historical, not new requests"
+  }
+]

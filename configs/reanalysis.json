@@ -1,0 +1,9 @@
+{
+  "seed": 42,
+  "bootstrap_repeats": 1000,
+  "threshold": 0.5,
+  "cohort": ["pope24.json", "pope30.json", "pope31.json", "pope32.json"],
+  "methods": ["siglip-whole", "clipB32-grid", "siglip-grid"],
+  "selective_runs": ["pope_v3_s3.json", "pope_v3_s4.json"],
+  "status": "exploratory_reanalysis_not_new_test"
+}

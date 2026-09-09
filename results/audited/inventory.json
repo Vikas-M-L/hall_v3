@@ -1,0 +1,1465 @@
+{
+  "files": [
+    {
+      "path": "vtrace-plus/app.py",
+      "bytes": 30612,
+      "sha256": "13a18f9d49f42ea2c859be4f0eea63e41811f0e2cdb2e5bdbbd0b543438f6ecf",
+      "classes": [],
+      "functions": [
+        "get_clip",
+        "get_owl",
+        "verdict_of",
+        "bar_of",
+        "_f1",
+        "_mk_extractor",
+        "_nan2none"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "collections",
+        "fusion.diagnose",
+        "fusion.negation",
+        "fusion.vtrace_fusion",
+        "io",
+        "json",
+        "models.claim_extractor",
+        "models.clip_wrapper",
+        "models.gemini_wrapper",
+        "models.owl_wrapper",
+        "pandas",
+        "pathlib",
+        "re",
+        "streamlit",
+        "sys",
+        "time"
+      ]
+    },
+    {
+      "path": "vtrace-plus/assets/coco_cats.jpg",
+      "bytes": 59616,
+      "sha256": "78f69d463b57ef17add86bc7bc443624a1fba7d90c5f789d2c6076c798118458"
+    },
+    {
+      "path": "vtrace-plus/assets/coco_nocat1.jpg",
+      "bytes": 56271,
+      "sha256": "58ccb02d789cc94de52399596b3f0b4ab3daf69c872b9d806bc7c5a602f23c20"
+    },
+    {
+      "path": "vtrace-plus/assets/coco_nocat2.jpg",
+      "bytes": 25990,
+      "sha256": "a9f81bd477c4794b431866bb50671957ce48719a987eb60f9f7fa49c7d514250"
+    },
+    {
+      "path": "vtrace-plus/assets/gallery_results.json",
+      "bytes": 7010,
+      "sha256": "bf494e9798de46e10703ae45cf18ec05248b122e36ecc933fcd6310a5b7ba827"
+    },
+    {
+      "path": "vtrace-plus/assets/half_red_blue.jpg",
+      "bytes": 3858,
+      "sha256": "fbff36f9f9754dbc9c953bd449021a16174660faf5eb9c8ab01769f966591cad"
+    },
+    {
+      "path": "vtrace-plus/assets/red_square.jpg",
+      "bytes": 3129,
+      "sha256": "228baf0a0a6050cc260f7b997d6de0f38cb73700e0881626a5aa9c38914c909d"
+    },
+    {
+      "path": "vtrace-plus/assets/scenarios.json",
+      "bytes": 2434,
+      "sha256": "02c20d0c00129d5bd9971d157f3ba5a92b2932232c066a0e9c1969852bbc008d"
+    },
+    {
+      "path": "vtrace-plus/configs/default.yaml",
+      "bytes": 4574,
+      "sha256": "8b428d862ff8537b02717bdd50a3b6acdf5ff291c3aa4d3cc91a8a24b680fbb8"
+    },
+    {
+      "path": "vtrace-plus/fusion/__init__.py",
+      "bytes": 229,
+      "sha256": "0815af64d05838c370c4defb545e0d407481f55ce5039e11e44660151079dae2",
+      "classes": [],
+      "functions": [],
+      "imports": [
+        "vtrace_fusion"
+      ]
+    },
+    {
+      "path": "vtrace-plus/fusion/diagnose.py",
+      "bytes": 5226,
+      "sha256": "d0236be67e2c7e310ba02af1374b899095464863fe3920e38f3fd7f1ac6a643f",
+      "classes": [],
+      "functions": [
+        "diagnose",
+        "_out"
+      ],
+      "imports": [
+        "__future__"
+      ]
+    },
+    {
+      "path": "vtrace-plus/fusion/gbm_diagnoser.py",
+      "bytes": 5915,
+      "sha256": "677c46d03ff097f5467c8e459cfc2fcd35a9dc9e3deea2e66923067a1a445fff",
+      "classes": [],
+      "functions": [
+        "generate_synthetic",
+        "train",
+        "save_bundle",
+        "load_bundle",
+        "diagnose_claim",
+        "jit"
+      ],
+      "imports": [
+        "__future__",
+        "joblib",
+        "logging",
+        "numpy",
+        "pandas",
+        "pathlib",
+        "sklearn.ensemble",
+        "sklearn.metrics",
+        "sklearn.model_selection"
+      ]
+    },
+    {
+      "path": "vtrace-plus/fusion/negation.py",
+      "bytes": 4125,
+      "sha256": "f854c0a633965ec68dcbcb96855e8ba85fc9b04f7ddc0f2b1a008bad62b3100c",
+      "classes": [],
+      "functions": [
+        "has_negation",
+        "has_hedge",
+        "make_counterclaim",
+        "invert_for_negation",
+        "apply_negation"
+      ],
+      "imports": [
+        "__future__",
+        "re"
+      ]
+    },
+    {
+      "path": "vtrace-plus/fusion/vtrace_fusion.py",
+      "bytes": 27504,
+      "sha256": "ee6a83d815a30352eb336f50395bee9e47cbfdfc628aef9cb757093c754078e1",
+      "classes": [
+        "SignalBundle",
+        "FusionResult"
+      ],
+      "functions": [
+        "v3_verdict_and_risk",
+        "to_risk",
+        "compute_ced",
+        "compute_disagreement",
+        "_normalize",
+        "v1_weights",
+        "v2_weights",
+        "fuse",
+        "aggregate",
+        "evidence_coverage",
+        "as_dict",
+        "top_signal",
+        "explain",
+        "to_dict"
+      ],
+      "imports": [
+        "__future__",
+        "dataclasses",
+        "fusion.negation",
+        "logging",
+        "numpy"
+      ]
+    },
+    {
+      "path": "vtrace-plus/models/__init__.py",
+      "bytes": 53,
+      "sha256": "86654d0d0dd7ecc0d4ac57510e48c7089cc8b1b0f2cfbd1cb7055ee30ad30bb8",
+      "classes": [],
+      "functions": [],
+      "imports": []
+    },
+    {
+      "path": "vtrace-plus/models/claim_extractor.py",
+      "bytes": 9033,
+      "sha256": "68007ef74a90d207a4c8f1d18832e481543daf8a038be18fdf00a37d5c9e0232",
+      "classes": [
+        "Claim",
+        "ClaimExtractor"
+      ],
+      "functions": [
+        "to_dict",
+        "__init__",
+        "_ask",
+        "_parse_json_array",
+        "_locate",
+        "classify_type",
+        "extract"
+      ],
+      "imports": [
+        "__future__",
+        "dataclasses",
+        "difflib",
+        "json",
+        "logging",
+        "re"
+      ]
+    },
+    {
+      "path": "vtrace-plus/models/clip_wrapper.py",
+      "bytes": 17112,
+      "sha256": "21a17a3aca154d3a4cf57058be04d6a7a7494ff2c9429ae232e7a69e5c68b80c",
+      "classes": [
+        "RegionSet",
+        "CLIPWrapper"
+      ],
+      "functions": [
+        "propose_regions",
+        "__len__",
+        "__init__",
+        "_as_tensor",
+        "_embed_images",
+        "_expand_templates",
+        "_embed_texts",
+        "encode_regions",
+        "_to_unit",
+        "observed_cosine_range",
+        "suggested_window",
+        "calibration_report",
+        "pairwise_scores",
+        "similarity",
+        "evidence"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "dataclasses",
+        "logging",
+        "numpy",
+        "open_clip",
+        "torch",
+        "transformers"
+      ]
+    },
+    {
+      "path": "vtrace-plus/models/counterfactual_wrapper.py",
+      "bytes": 12164,
+      "sha256": "3f32cd3db388ee82146a5550ebff70c0121f5d2468cfca99b00f5aaf4cb23358",
+      "classes": [
+        "CounterfactualWrapper"
+      ],
+      "functions": [
+        "mask_region",
+        "sensitivity_from_delta",
+        "__init__",
+        "sensitivity",
+        "_local_sensitivity",
+        "calibration_report"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "logging",
+        "numpy"
+      ]
+    },
+    {
+      "path": "vtrace-plus/models/gemini_wrapper.py",
+      "bytes": 5543,
+      "sha256": "89952e4665d567475a8de49352eb3df31547ba9d8ac5c2d607271a42b8d09b88",
+      "classes": [
+        "GeminiWrapper"
+      ],
+      "functions": [
+        "_key",
+        "_post",
+        "_img_part",
+        "__init__",
+        "_call",
+        "describe",
+        "sample",
+        "decompose",
+        "verify"
+      ],
+      "imports": [
+        "__future__",
+        "base64",
+        "dotenv",
+        "io",
+        "json",
+        "logging",
+        "models.claim_extractor",
+        "os",
+        "time",
+        "urllib.error",
+        "urllib.request"
+      ]
+    },
+    {
+      "path": "vtrace-plus/models/owl_wrapper.py",
+      "bytes": 3784,
+      "sha256": "2125cf451351d837d195a9b866f57d588067e06bb48af8595a88d77e7a5e97aa",
+      "classes": [
+        "OWLDetector"
+      ],
+      "functions": [
+        "parse_count",
+        "count_verdict",
+        "__init__",
+        "detect"
+      ],
+      "imports": [
+        "__future__",
+        "logging",
+        "re",
+        "torch",
+        "transformers"
+      ]
+    },
+    {
+      "path": "vtrace-plus/models/uniprobe_wrapper.py",
+      "bytes": 7425,
+      "sha256": "e18a94952f99e06e6e238ab7c59a4a4927edf3ec9bdba6fcc7196b1fd2ed93dd",
+      "classes": [
+        "UniProbeWrapper"
+      ],
+      "functions": [
+        "__init__",
+        "is_stubbed",
+        "score",
+        "_dispersion_proxy"
+      ],
+      "imports": [
+        "__future__",
+        "logging",
+        "numpy"
+      ]
+    },
+    {
+      "path": "vtrace-plus/models/vlm_wrapper.py",
+      "bytes": 12013,
+      "sha256": "d5d5f1b3a9dc35add23453f589e20acb01a079a04efee208274b0e234426122e",
+      "classes": [
+        "GenerationOutput",
+        "ScoreOutput",
+        "VLMWrapper"
+      ],
+      "functions": [
+        "logprob_span",
+        "confidence_span",
+        "__init__",
+        "_messages",
+        "_prepare",
+        "_render_prefix",
+        "_count_visual_tokens",
+        "generate",
+        "char_span_to_token_indices",
+        "score_continuation",
+        "hidden_states_for_text"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "dataclasses",
+        "importlib.util",
+        "logging",
+        "numpy",
+        "torch",
+        "torch.nn.functional",
+        "transformers",
+        "typing"
+      ]
+    },
+    {
+      "path": "vtrace-plus/models/vtrace_m0_m4_diagnosis.joblib",
+      "bytes": 751941,
+      "sha256": "78f2e9106610778bf311a944c02ba1ee24e9561822ff62a919ae2e0de7d2b49a"
+    },
+    {
+      "path": "vtrace-plus/pages/1_Autopsy.py",
+      "bytes": 5151,
+      "sha256": "690f578fc0acb437b66dada298199d0dfd48d7b3d26afba8dde4dc91e3eb6081",
+      "classes": [],
+      "functions": [
+        "_num"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "fusion.diagnose",
+        "io",
+        "streamlit",
+        "studio_lib",
+        "sys"
+      ]
+    },
+    {
+      "path": "vtrace-plus/pages/2_Cascade.py",
+      "bytes": 1801,
+      "sha256": "6c3f64b9620cf4eba37e0ccba8704218bdf8050415b4466b2deb902ecebe658b",
+      "classes": [],
+      "functions": [],
+      "imports": [
+        "__future__",
+        "json",
+        "pandas",
+        "pathlib",
+        "streamlit",
+        "studio_lib"
+      ]
+    },
+    {
+      "path": "vtrace-plus/pages/3_Scenario_Gallery.py",
+      "bytes": 2580,
+      "sha256": "24414a16bff433b4b06a22f72afd67c3df766e75a139bf61c7d37a688644cc82",
+      "classes": [],
+      "functions": [],
+      "imports": [
+        "__future__",
+        "streamlit",
+        "studio_lib"
+      ]
+    },
+    {
+      "path": "vtrace-plus/pages/4_Benchmarks.py",
+      "bytes": 3985,
+      "sha256": "a21abb7b84eb6e983ffa11accf9f1537b66c7dae099ad302e038a371f1de2607",
+      "classes": [],
+      "functions": [],
+      "imports": [
+        "__future__",
+        "json",
+        "pandas",
+        "pathlib",
+        "streamlit",
+        "studio_lib"
+      ]
+    },
+    {
+      "path": "vtrace-plus/pages/5_Methods.py",
+      "bytes": 2842,
+      "sha256": "25132e01fba3cf067e8a355b52c4f2ee83386d5f119d80270294af7de531cb5a",
+      "classes": [],
+      "functions": [],
+      "imports": [
+        "__future__",
+        "streamlit",
+        "studio_lib"
+      ]
+    },
+    {
+      "path": "vtrace-plus/README.md",
+      "bytes": 15104,
+      "sha256": "a16237432b902dc532d098fffb259c2c9603f24624f23bf77f8ecbdab3011c5d"
+    },
+    {
+      "path": "vtrace-plus/scripts/precompute_gallery.py",
+      "bytes": 3410,
+      "sha256": "6042ab7a6278efded7fa0e99a4c09c7f84a10cbe0ee3bb6a455bcdc33e32c9fd",
+      "classes": [],
+      "functions": [
+        "verdict",
+        "main"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "fusion.negation",
+        "fusion.vtrace_fusion",
+        "json",
+        "models.clip_wrapper",
+        "pathlib",
+        "sys"
+      ]
+    },
+    {
+      "path": "vtrace-plus/scripts/run_pipeline.py",
+      "bytes": 26179,
+      "sha256": "002c2ac1f1fdbd990ad70df9a6b57ba9b22c824072ee7f81392d1c6a410c1c8b",
+      "classes": [],
+      "functions": [
+        "collect_signals",
+        "validate_model_configs",
+        "load_models",
+        "process_image",
+        "run_summary",
+        "dry_run",
+        "load_config",
+        "seed_everything",
+        "json_safe",
+        "main"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "argparse",
+        "collections",
+        "fusion.negation",
+        "fusion.vtrace_fusion",
+        "json",
+        "logging",
+        "models.claim_extractor",
+        "models.clip_wrapper",
+        "models.counterfactual_wrapper",
+        "models.uniprobe_wrapper",
+        "models.vlm_wrapper",
+        "numpy",
+        "pathlib",
+        "random",
+        "sys",
+        "torch",
+        "yaml"
+      ]
+    },
+    {
+      "path": "vtrace-plus/scripts/train_gbm.py",
+      "bytes": 1575,
+      "sha256": "8d7c9ae66a3485486e6f30de829776bbda27caf415061819af32c64fd6f63d0b",
+      "classes": [],
+      "functions": [
+        "main"
+      ],
+      "imports": [
+        "__future__",
+        "argparse",
+        "fusion.gbm_diagnoser",
+        "pathlib",
+        "sys"
+      ]
+    },
+    {
+      "path": "vtrace-plus/studio_lib.py",
+      "bytes": 3583,
+      "sha256": "b8d047f1800fc223268ed5b32d03b052ead6965b753f5cc549a06899a4d83917",
+      "classes": [],
+      "functions": [
+        "verdict_of",
+        "bar_of",
+        "get_clip",
+        "load_gallery",
+        "load_pope_tables",
+        "_load"
+      ],
+      "imports": [
+        "__future__",
+        "json",
+        "models.clip_wrapper",
+        "pathlib",
+        "streamlit",
+        "sys"
+      ]
+    },
+    {
+      "path": "vtrace-plus/tests/test_diagnose.py",
+      "bytes": 2173,
+      "sha256": "cb3819dee48b1971260f3caf1a8b9bfe0cc380abbad4f5c598dfcc9140e94dbc",
+      "classes": [],
+      "functions": [
+        "test_low_risk_is_m0_accept",
+        "test_count_mismatch_is_m2_with_recount",
+        "test_vlm_refute_weak_grounding_is_m2",
+        "test_vlm_refute_strong_grounding_is_m4",
+        "test_high_uncertainty_is_m3_abstain",
+        "test_clip_split_on_relation_is_m4",
+        "test_plain_unsupported_defaults_m1",
+        "test_nan_is_unknown_not_m0",
+        "test_taxonomy_has_m4",
+        "test_refutation_is_not_ignored_when_clip_risk_is_low"
+      ],
+      "imports": [
+        "__future__",
+        "fusion.diagnose",
+        "pathlib",
+        "sys"
+      ]
+    },
+    {
+      "path": "vtrace-plus/tests/test_fusion.py",
+      "bytes": 16205,
+      "sha256": "6b90f8afeb1418ecaebbaddd6133bb67f383cb9acd6ae728c945556856ad411a",
+      "classes": [],
+      "functions": [
+        "test_orientation_inverts_the_right_signals",
+        "test_orientation_clamps_and_propagates_nan",
+        "test_a_perfectly_grounded_claim_scores_near_zero",
+        "test_a_maximally_bad_claim_scores_near_one",
+        "test_v1_is_a_plain_average_of_risks",
+        "test_v1_ignores_the_rules_entirely",
+        "test_ced_is_native_orientation",
+        "test_rule1_fires_and_shifts_weight_off_confidence",
+        "test_rule1_does_not_fire_when_evidence_supports_confidence",
+        "test_disagreement_needs_two_signals",
+        "test_stubbed_signals_do_not_count_as_disagreeing",
+        "test_rule2_cannot_fire_off_placeholder_constants",
+        "test_a_reported_rule_always_actually_changed_the_weights",
+        "test_rule2_fires_and_promotes_clip_as_tiebreaker",
+        "test_both_rules_can_fire_together",
+        "test_weights_and_contributions_stay_consistent",
+        "test_missing_signals_are_dropped_and_weights_renormalize",
+        "test_disabled_signals_are_excluded",
+        "test_a_disabled_signal_cannot_still_drive_rule_1",
+        "test_stubbed_signals_can_be_dropped",
+        "test_no_usable_signals_yields_nan_not_a_confident_zero",
+        "test_bad_mode_is_rejected",
+        "_sweep",
+        "test_v1_risk_decreases_monotonically_as_evidence_improves",
+        "test_v2_monotonicity_violation_is_bounded",
+        "test_aggregation_methods",
+        "test_aggregation_skips_nans_and_survives_an_empty_list",
+        "test_unknown_aggregation_method_is_rejected"
+      ],
+      "imports": [
+        "__future__",
+        "fusion.vtrace_fusion",
+        "numpy",
+        "pathlib",
+        "sys"
+      ]
+    },
+    {
+      "path": "vtrace-plus/tests/test_gbm.py",
+      "bytes": 2338,
+      "sha256": "8a0e1b5b98832aceb03bd02432625a65c1acf2298793e76855a9e81398f0dcda",
+      "classes": [],
+      "functions": [
+        "test_synthetic_covers_all_mechanisms",
+        "test_train_reports_and_confuses",
+        "test_routing_covers_every_mechanism",
+        "test_save_load_roundtrip_and_diagnose",
+        "test_feature_mismatch_refuses"
+      ],
+      "imports": [
+        "__future__",
+        "fusion.gbm_diagnoser",
+        "joblib",
+        "pathlib",
+        "sys",
+        "tempfile"
+      ]
+    },
+    {
+      "path": "vtrace-plus/tests/test_gemini.py",
+      "bytes": 4550,
+      "sha256": "e986e1b891bbcb089a712d444764be6866039275813d740b7fd8c67798a7c66b",
+      "classes": [],
+      "functions": [
+        "_fake_post_factory",
+        "test_decompose_parses_clean_json",
+        "test_decompose_unparseable_returns_empty",
+        "test_overload_falls_back_to_secondary_model",
+        "test_non_retryable_error_raises",
+        "test_missing_key_fails_fast",
+        "test_verify_parses_yes_no_and_garbage",
+        "fake",
+        "flaky",
+        "bad"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "models.gemini_wrapper",
+        "os",
+        "pathlib",
+        "sys",
+        "urllib.error"
+      ]
+    },
+    {
+      "path": "vtrace-plus/tests/test_negation.py",
+      "bytes": 1939,
+      "sha256": "994c0bf5c76855774e3861c559cf49319f37a81873181bbd00e4a815c409de6d",
+      "classes": [],
+      "functions": [
+        "test_detects_common_negations",
+        "test_negated_strong_match_is_high_risk",
+        "test_negated_weak_match_is_low_risk",
+        "test_plain_claims_pass_through",
+        "test_nan_propagates"
+      ],
+      "imports": [
+        "__future__",
+        "fusion.negation",
+        "pathlib",
+        "sys"
+      ]
+    },
+    {
+      "path": "vtrace-plus/tests/test_ordering.py",
+      "bytes": 3093,
+      "sha256": "25ace758373df9ee3505a7a489087d1c0c0bf0f77d22f5cc9b789596a79ed0c9",
+      "classes": [],
+      "functions": [
+        "make_clip",
+        "risk_for",
+        "test_true_claim_beats_false_claim",
+        "test_attribute_beats_wrong_attribute",
+        "test_whole_won_flag_distinguishes_global_from_local"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "fusion.vtrace_fusion",
+        "models.clip_wrapper",
+        "pathlib",
+        "sys"
+      ]
+    },
+    {
+      "path": "vtrace-plus/tests/test_owl.py",
+      "bytes": 1310,
+      "sha256": "2106799e928a36d264508f70101ee4c3fa2a5e6082c0561aeb7e44c238240390",
+      "classes": [],
+      "functions": [
+        "test_parses_counts_and_labels",
+        "test_verdict_logic"
+      ],
+      "imports": [
+        "__future__",
+        "models.owl_wrapper",
+        "pathlib",
+        "sys"
+      ]
+    },
+    {
+      "path": "vtrace-plus/tests/test_v3.py",
+      "bytes": 6893,
+      "sha256": "14a927d3e3d9e80d4cd50116621f6ee0accaf9bfecee0f8465a93f70cdfd6bb8",
+      "classes": [],
+      "functions": [
+        "get_clip",
+        "_v3",
+        "test_pairwise_positive_claim_wins",
+        "test_pairwise_negative_claim_wins",
+        "test_pairwise_tie_becomes_unresolved",
+        "test_pairwise_negated_claim_is_oriented_correctly",
+        "test_false_denial_is_contradicted",
+        "test_true_denial_is_supported",
+        "test_hedged_claim_does_not_generate_hard_negation",
+        "test_v3_preserves_v1_and_v2_behavior",
+        "test_evidence_coverage_excludes_hedged_claims",
+        "test_pairwise_scores_use_the_same_calibration_window",
+        "res"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "fusion.negation",
+        "fusion.vtrace_fusion",
+        "models.clip_wrapper",
+        "numpy",
+        "pathlib",
+        "sys"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/configs/default.yaml",
+      "bytes": 5627,
+      "sha256": "7d436cc117984d64d2d71d379c81d9cffa2ce0a46481e8450b9c3ab97aeecb74"
+    },
+    {
+      "path": "adaptive-vtrace/data/pope_loader.py",
+      "bytes": 2915,
+      "sha256": "b5ac3484c3f1646d7350b50abe249e4b7bfecf5e608ed98d53e782738404b2ae",
+      "classes": [],
+      "functions": [
+        "_norm_label",
+        "_norm_category",
+        "load_pope",
+        "three_way_summary"
+      ],
+      "imports": [
+        "__future__",
+        "collections",
+        "json",
+        "logging",
+        "pathlib"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/data/test_images/scene.jpg",
+      "bytes": 11430,
+      "sha256": "0ab5d81071f47904ba8d6b9c9ec43d32c5e5784f544d164ae7674986162cb5f3"
+    },
+    {
+      "path": "adaptive-vtrace/eval/metrics.py",
+      "bytes": 3990,
+      "sha256": "86c9c26d32d59a73d0e25da7bed471e7b43e83a32859a11038302870fd776b8a",
+      "classes": [],
+      "functions": [
+        "net_gain",
+        "auroc",
+        "auprc",
+        "f1_at_threshold",
+        "ece",
+        "risk_coverage_curve",
+        "paired_bootstrap_delta",
+        "mcnemar"
+      ],
+      "imports": [
+        "__future__",
+        "numpy",
+        "scipy.stats",
+        "sklearn.metrics"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/eval/pope_bench.py",
+      "bytes": 9211,
+      "sha256": "e5125c20246c3d8e08132e35b69374e435cd840c3154bda7264ae46a09de7b18",
+      "classes": [],
+      "functions": [
+        "question_to_claim",
+        "load_split",
+        "make_clip",
+        "score_all",
+        "main",
+        "_bca_auroc"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "argparse",
+        "eval.metrics",
+        "fusion.negation",
+        "fusion.vtrace_fusion",
+        "io",
+        "json",
+        "models.clip_wrapper",
+        "numpy",
+        "pandas",
+        "pathlib",
+        "re",
+        "sys",
+        "time"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/finetune/build_lora_data.py",
+      "bytes": 3235,
+      "sha256": "7bc7741344bb6f0cd26ecf7ea931c0506d8a8daaa24625aa2b6c276b411f0797",
+      "classes": [],
+      "functions": [
+        "_fmt_float",
+        "row_to_record",
+        "build_jsonl"
+      ],
+      "imports": [
+        "__future__",
+        "collections",
+        "json",
+        "logging",
+        "pathlib"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/finetune/finetune_qwen_lora.py",
+      "bytes": 5735,
+      "sha256": "3929fb0c348664abaf7965948128b9b80ec08c8b23dc29d54240a8c164a4ef7f",
+      "classes": [],
+      "functions": [
+        "load_records",
+        "main",
+        "render"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "argparse",
+        "datasets",
+        "json",
+        "pathlib",
+        "peft",
+        "torch",
+        "transformers"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/fusion/two_stage.py",
+      "bytes": 5295,
+      "sha256": "0d4e7c1c610225fed928589204f0a04eb66186294e479f1b0ad0449625f7041d",
+      "classes": [
+        "TwoStageClassifier"
+      ],
+      "functions": [
+        "_make_model",
+        "__init__",
+        "fit",
+        "predict",
+        "predict_proba_detection"
+      ],
+      "imports": [
+        "__future__",
+        "logging",
+        "numpy",
+        "sklearn.linear_model",
+        "sklearn.model_selection",
+        "xgboost"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/models/claim_extractor.py",
+      "bytes": 8688,
+      "sha256": "9ccf5c6675f2d33b5e1c1c6b6e266ea3046ad19948129e1376685241f7bf1714",
+      "classes": [
+        "Claim",
+        "ClaimExtractor"
+      ],
+      "functions": [
+        "to_dict",
+        "__init__",
+        "_ask",
+        "_parse_json_array",
+        "_locate",
+        "classify_type",
+        "extract"
+      ],
+      "imports": [
+        "__future__",
+        "dataclasses",
+        "difflib",
+        "json",
+        "logging",
+        "re"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/models/clip_similarity.py",
+      "bytes": 4341,
+      "sha256": "22a75eeece36dc4e74259d1b574d4db3101a06912ed6f4247f866edd4fccbf50",
+      "classes": [
+        "CLIPScorer"
+      ],
+      "functions": [
+        "__init__",
+        "_embed",
+        "similarity",
+        "region_similarities",
+        "evidence_grounding",
+        "text_similarity"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "logging",
+        "numpy",
+        "open_clip",
+        "torch",
+        "transformers"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/models/counterfactual.py",
+      "bytes": 14112,
+      "sha256": "fdd83b5f48d5b88de1cad37caba28fec8edc3d7c156ef2ec4a83e488685e3409",
+      "classes": [
+        "CounterfactualModule"
+      ],
+      "functions": [
+        "mask_region",
+        "sensitivity_from_delta",
+        "__init__",
+        "_load_cf_detect",
+        "sensitivity",
+        "control_sensitivity",
+        "_random_box",
+        "cf_detect_score",
+        "calibration_report"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "logging",
+        "numpy"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/models/grounding.py",
+      "bytes": 13566,
+      "sha256": "1fb8b3f6c0bdfd7101276335d402fba8eae7edc26ce956442ac321777598456c",
+      "classes": [
+        "Region",
+        "GroundingModule"
+      ],
+      "functions": [
+        "__init__",
+        "_load_groundingdino",
+        "_rollout_regions",
+        "_boxes_from_mask",
+        "_grid_fallback",
+        "_gdino_regions",
+        "propose_regions",
+        "best_region"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "dataclasses",
+        "logging",
+        "math",
+        "numpy",
+        "torch",
+        "transformers"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/models/uniprobe_wrapper.py",
+      "bytes": 12308,
+      "sha256": "57b0e019beaf415f1546e9fe42019febeecf7f9926276c27c3aebd1bb9c2738d",
+      "classes": [
+        "SubstituteProbe",
+        "UniProbeWrapper"
+      ],
+      "functions": [
+        "__init__",
+        "forward",
+        "__init__",
+        "_init_substitute_probe",
+        "is_stubbed",
+        "score",
+        "_substitute_score",
+        "_dispersion_proxy"
+      ],
+      "imports": [
+        "__future__",
+        "logging",
+        "numpy",
+        "pathlib",
+        "torch",
+        "torch.nn"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/models/vlm_wrapper.py",
+      "bytes": 13760,
+      "sha256": "b326bbe017feb3bfc961cc253da013fa993c54e65fa525234297f65fa76bd10e",
+      "classes": [
+        "GenerationOutput",
+        "ScoreOutput",
+        "VLMWrapper"
+      ],
+      "functions": [
+        "logprob_span",
+        "__init__",
+        "_messages",
+        "_prepare",
+        "_render_prefix",
+        "_count_visual_tokens",
+        "generate",
+        "char_span_to_token_indices",
+        "score_continuation",
+        "hidden_states_for_text",
+        "attention_rollout"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "dataclasses",
+        "logging",
+        "numpy",
+        "psutil",
+        "torch",
+        "torch.nn.functional",
+        "transformers",
+        "typing"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/repair/cascade.py",
+      "bytes": 3936,
+      "sha256": "9378de9ef96e3295a69bffb9fb52c221400a5bdfb7db11f4aad309cf86b09c10",
+      "classes": [],
+      "functions": [
+        "decisiveness",
+        "cascade_decide",
+        "pareto_table"
+      ],
+      "imports": [
+        "__future__",
+        "logging",
+        "numpy"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/repair/policy.py",
+      "bytes": 6885,
+      "sha256": "c2c1c67ab700399e9c2f93c7d698d71e2ed2b6c51151b4e60a6f9cceaf0e185b",
+      "classes": [],
+      "functions": [
+        "net_gain_of",
+        "train_outcome_policy",
+        "compare"
+      ],
+      "imports": [
+        "__future__",
+        "collections",
+        "fusion.two_stage",
+        "logging",
+        "numpy",
+        "sklearn.model_selection"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/results/pope15.json",
+      "bytes": 3717,
+      "sha256": "f65f44e6e03d9dc9b6964ac73c9ea201057d5d67d6447ce6e5c96d7d3b6a9812"
+    },
+    {
+      "path": "adaptive-vtrace/results/pope24.json",
+      "bytes": 10451,
+      "sha256": "5c426c80218272390f1bea2101d3575f4296fe0ac094691321d9b04579baa55c"
+    },
+    {
+      "path": "adaptive-vtrace/results/pope30.json",
+      "bytes": 11096,
+      "sha256": "cda333cf67c374d15aa8427c8d7e21b9cf8e02df19002edc5ad81fa373d68e2c"
+    },
+    {
+      "path": "adaptive-vtrace/results/pope31.json",
+      "bytes": 13489,
+      "sha256": "7eba01902627cd2fc1927d325f799bc8d57651301fb88a8071ca41be37d30f34"
+    },
+    {
+      "path": "adaptive-vtrace/results/pope32.json",
+      "bytes": 8533,
+      "sha256": "64454267a30de9841fe1fb5894336488da236308b4d005135c91e60833fd00b2"
+    },
+    {
+      "path": "adaptive-vtrace/results/pope_tiny.json",
+      "bytes": 3555,
+      "sha256": "ccd120f0aba615be42a28445a2b802f8c512b45aafdb1f4401dc48f178babba6"
+    },
+    {
+      "path": "adaptive-vtrace/results/pope_v3_s3.json",
+      "bytes": 12533,
+      "sha256": "714b0f6fcc7ce06ae0251296be4e3414151d1a8bc946235bcd303e127b10b9cf"
+    },
+    {
+      "path": "adaptive-vtrace/results/pope_v3_s4.json",
+      "bytes": 10705,
+      "sha256": "7286a0f1921c87541b94f2e5b0eb9422c90817732802c17f1304122461e795ea"
+    },
+    {
+      "path": "adaptive-vtrace/scripts/run_pipeline.py",
+      "bytes": 21381,
+      "sha256": "d170c57ad36a2c08e0d3903e04f9f5a862366360300dd654eb11c51200774cff",
+      "classes": [],
+      "functions": [
+        "load_models",
+        "extract_signals",
+        "_compute_vig",
+        "_make_null_image",
+        "_compute_prior_term",
+        "_compute_self_consistency",
+        "_compute_disagreement",
+        "process_image",
+        "run_summary",
+        "load_config",
+        "seed_everything",
+        "json_safe",
+        "main"
+      ],
+      "imports": [
+        "PIL",
+        "__future__",
+        "argparse",
+        "collections",
+        "json",
+        "logging",
+        "models.claim_extractor",
+        "models.clip_similarity",
+        "models.counterfactual",
+        "models.grounding",
+        "models.uniprobe_wrapper",
+        "models.vlm_wrapper",
+        "numpy",
+        "pathlib",
+        "random",
+        "scipy.special",
+        "sys",
+        "time",
+        "torch",
+        "yaml"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/signals/self_consistency.py",
+      "bytes": 2633,
+      "sha256": "3b469654e111bb0f1efe46c84647e6994b5117bdf3435dcce5f302c74c8654ec",
+      "classes": [],
+      "functions": [
+        "tokenize",
+        "f1_overlap",
+        "claim_consistency",
+        "sample_agreement_matrix",
+        "score_claims_consistency"
+      ],
+      "imports": [
+        "__future__",
+        "collections",
+        "logging",
+        "re"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/signals/vig.py",
+      "bytes": 4739,
+      "sha256": "c2d559a4860e859876f1d353cbda1f61e3fd17e0c286af491df7221eda60e5d4",
+      "classes": [],
+      "functions": [
+        "log_expected_prob",
+        "vig_from_logprobs",
+        "per_token_vig",
+        "score_claim_vig"
+      ],
+      "imports": [
+        "__future__",
+        "logging",
+        "math",
+        "numpy"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/tests/test_cascade.py",
+      "bytes": 2293,
+      "sha256": "c950e349acfe7abd929e72f97960fd6dbf8d17ed5aa0aef17a8558bf526a43bc",
+      "classes": [],
+      "functions": [
+        "test_decisive_clip_claim_never_escalates",
+        "test_tossup_escalates_to_full",
+        "test_nan_clip_always_escalates",
+        "test_cascade_matches_full_accuracy_at_fraction_of_cost",
+        "test_strict_tau_costs_more"
+      ],
+      "imports": [
+        "__future__",
+        "numpy",
+        "pathlib",
+        "repair.cascade",
+        "sys"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/tests/test_lora_data.py",
+      "bytes": 2029,
+      "sha256": "97154ab23f2c200b1547096ee9b31952cfa1a182a16f8e9451a7cc208013edbb",
+      "classes": [],
+      "functions": [
+        "_row",
+        "test_record_format",
+        "test_bad_mechanism_raises",
+        "test_nan_and_missing_format_cleanly",
+        "test_balances_to_minority_class",
+        "test_jsonl_is_parseable"
+      ],
+      "imports": [
+        "__future__",
+        "finetune.build_lora_data",
+        "json",
+        "pathlib",
+        "sys",
+        "tempfile"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/tests/test_metrics.py",
+      "bytes": 2765,
+      "sha256": "50911b75a3e0792fb9fe6cdf1dc175cae7878a295d5987213e9d5d320a50c099",
+      "classes": [],
+      "functions": [
+        "test_net_gain_abstention_counts_both_sides",
+        "test_auroc_perfect_and_random",
+        "test_ece_calibrated_is_low",
+        "test_risk_coverage_monotone_coverage",
+        "test_paired_bootstrap_covers_true_delta",
+        "test_auprc_and_f1",
+        "test_mcnemar_ignores_agreements"
+      ],
+      "imports": [
+        "__future__",
+        "eval.metrics",
+        "numpy",
+        "pathlib",
+        "sys"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/tests/test_policy.py",
+      "bytes": 3794,
+      "sha256": "9127e6dca1988db2c5e67d2111d1995c6c077eb8a61a1dda0190cd5afcd3cb2d",
+      "classes": [],
+      "functions": [
+        "synth",
+        "test_routed_beats_uniform_when_taxonomy_true",
+        "test_abstain_everything_scores_zero_net",
+        "test_outcome_policy_row_runs"
+      ],
+      "imports": [
+        "__future__",
+        "numpy",
+        "pathlib",
+        "repair.policy",
+        "sys"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/tests/test_pope_loader.py",
+      "bytes": 2288,
+      "sha256": "1d69bc6bbb4ed5cae4fe4005120025bc6208cfc630e02f84e9daf6f5b8ac9c9f",
+      "classes": [],
+      "functions": [
+        "_fixture",
+        "test_loads_and_skips_bad_entries",
+        "test_three_way_counts_and_yes_rate",
+        "test_key_variants_tolerated"
+      ],
+      "imports": [
+        "__future__",
+        "data.pope_loader",
+        "json",
+        "pathlib",
+        "sys",
+        "tempfile"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/tests/test_self_consistency.py",
+      "bytes": 2100,
+      "sha256": "bd2951cfd7e5173c2aca0e8b647086c6d38896fc3d20f2074d64d1e4d52dd297",
+      "classes": [],
+      "functions": [
+        "test_identical_is_one_disjoint_is_zero",
+        "test_stable_claim_scores_high",
+        "test_hallucinated_claim_scores_low",
+        "test_empty_samples_is_nan",
+        "test_matrix_is_symmetric_with_unit_diagonal",
+        "test_sampler_failure_degrades_to_nan",
+        "bad"
+      ],
+      "imports": [
+        "__future__",
+        "pathlib",
+        "signals.self_consistency",
+        "sys"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/tests/test_two_stage.py",
+      "bytes": 2602,
+      "sha256": "19b188f5fd16c27dea3e419434dc0f85d47c180638d571f0b94e70273a08f05e",
+      "classes": [],
+      "functions": [
+        "synth",
+        "test_gbm_learns_conjunctions",
+        "test_m0_noop_for_clean_claims",
+        "test_oof_column_runs",
+        "test_empty_hallucinated_raises"
+      ],
+      "imports": [
+        "__future__",
+        "fusion.two_stage",
+        "numpy",
+        "pathlib",
+        "sys"
+      ]
+    },
+    {
+      "path": "adaptive-vtrace/tests/test_vig.py",
+      "bytes": 3131,
+      "sha256": "be1382abcf9847a668571a4bb02f04ba323958ef29247dc17dd6934891b7bc0a",
+      "classes": [],
+      "functions": [
+        "test_logsumexp_matches_definition",
+        "test_mean_of_logs_is_biased_upward",
+        "test_vig_is_base_minus_prior",
+        "test_nan_propagates",
+        "test_per_token_averages_positions",
+        "test_score_claim_with_fake_scorer",
+        "test_prior_term_separates_common_from_rare",
+        "fake",
+        "fake_common",
+        "fake_rare"
+      ],
+      "imports": [
+        "__future__",
+        "math",
+        "numpy",
+        "pathlib",
+        "signals.vig",
+        "sys"
+      ]
+    },
+    {
+      "path": "paper/figs/fig1_architecture.png",
+      "bytes": 45761,
+      "sha256": "021dcc4e57d4fedfbf207d8dcde7416e396533da4d63f5d2d0b56a535c72d48c"
+    },
+    {
+      "path": "paper/figs/fig1_architecture_bw.png",
+      "bytes": 24777,
+      "sha256": "41974549a42970a2daafc445e15888e19b97a03dedac2667ee16f416f9221ba0"
+    },
+    {
+      "path": "paper/figs/fig2_baseline.png",
+      "bytes": 42114,
+      "sha256": "cd0f4d6219ebfaae31ca202e8a59455628237ce47f5b86cd47c8a20723e26a2a"
+    },
+    {
+      "path": "paper/figs/fig3_gbm.png",
+      "bytes": 51727,
+      "sha256": "245196e90c873a792a66da99915c9bec3788e0904a747803e08c3b84d2c04b8d"
+    },
+    {
+      "path": "paper/figs/fig4_ablation.png",
+      "bytes": 32273,
+      "sha256": "1aebe6789da008b9da3057605e50942cf3dc9fa3c98ae21c0e2716d00efc7b8b"
+    },
+    {
+      "path": "paper/figs/fig5_latency.png",
+      "bytes": 65530,
+      "sha256": "a109225e5a9b0546950337e13df60f6d3f16e1b1d6cc5526c3609cfbfb03051d"
+    },
+    {
+      "path": "paper/gen_figures.py",
+      "bytes": 7210,
+      "sha256": "89598e38443618d5b73bbf820f1cb1d9b3e331ebadbdd519e0c82af574011675",
+      "classes": [],
+      "functions": [
+        "load_pooled",
+        "fig1_architecture",
+        "fig2_baseline",
+        "fig3_gbm",
+        "fig4_ablation",
+        "fig5_latency"
+      ],
+      "imports": [
+        "__future__",
+        "eval.metrics",
+        "fusion.gbm_diagnoser",
+        "json",
+        "matplotlib",
+        "matplotlib.pyplot",
+        "numpy",
+        "pathlib",
+        "sys"
+      ]
+    },
+    {
+      "path": "paper/legacy_draft_unvalidated.tex",
+      "bytes": 12012,
+      "sha256": "acd41a08e9211cfe98ac3e463b42390f23249df7995260705a18ac61b6fc99d9"
+    },
+    {
+      "path": "paper/main.tex",
+      "bytes": 19981,
+      "sha256": "0f1e3c474dc0eb9a4ecc7dac6e3908f4d8afb0eaf36d13d1cab7b547a63714ca"
+    },
+    {
+      "path": "paper/README.md",
+      "bytes": 1614,
+      "sha256": "b6b01f183613d6e531137d38f283063b0582a20af15e56485f0a50e0300b432f"
+    }
+  ],
+  "python": "3.11.7",
+  "scope": "source/artifacts, secrets excluded"
+}

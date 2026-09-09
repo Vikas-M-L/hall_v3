@@ -1,0 +1,25 @@
+{
+  "status": "blocked_unvalidated_legacy_trainer",
+  "base_model": "Qwen/Qwen2.5-VL-3B-Instruct",
+  "base_revision": null,
+  "ranks_to_compare": [4, 8, 16],
+  "alpha_multiplier": 2,
+  "dropout": 0.05,
+  "learning_rate": 0.0002,
+  "epochs": 3,
+  "batch_size": 1,
+  "gradient_accumulation_steps": 16,
+  "seed": 42,
+  "required_before_run": [
+    "independently annotated natural diagnosis examples",
+    "image-group-disjoint train/calibration/test manifests",
+    "pinned model/processor/peft/transformers revisions",
+    "assistant-only loss-mask test including padding and image tokens",
+    "visual grid metadata and variable-length image collation test",
+    "single-batch GPU backward smoke test",
+    "actual trainable/total parameter count and memory/time logging"
+  ],
+  "trained_parameters": null,
+  "training_seconds": null,
+  "held_out_result": null
+}

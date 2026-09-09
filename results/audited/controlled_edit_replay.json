@@ -1,0 +1,367 @@
+{
+  "config": {
+    "status": "development",
+    "seed": 42,
+    "threshold": 0.5,
+    "model": "gemini-3.1-flash-lite",
+    "verifier_model": "gemini-3-flash-preview",
+    "max_calls": 6,
+    "timeout": 45,
+    "strategies": [
+      "original",
+      "uniform_self_correction",
+      "full"
+    ]
+  },
+  "config_sha256": "d03ab5430b9268f55c9c2570b6461c7f037bc1093d2ab19af08c689941cabaec",
+  "input_sha256": "8b7beb185213410919114c2c60005507d3fab7bae9a8654ec85198e2d1ce399e",
+  "recording_sha256": "fe274ce8ac53cd1ae7af9daecae8c2cb6a960c7a62036abb9934bcdc34046e83",
+  "source_revision": "32ff2afa5d7f23ee389729489a8d75e0ac2cf33c",
+  "python": "3.11.7",
+  "source_hashes": {
+    "ablations.py": "4814ce83ded2504c61127359fbce5b14e40b54cfa7ed2fb15ea8d49d2d160f71",
+    "analyze.py": "f6569ff11abaafa89291b2e14756065cd3e15dc88874fb9e6974adab7e23eb89",
+    "backends.py": "b368ec791bd863b2f559c4ffc35ded0a9e525b763adca10fd56fc842aab450c8",
+    "calibration.py": "0a9250f627586959fbe276fb535196ee3633d52073e250c9be1f147366997c0e",
+    "collect.py": "56ef07ff4fe0d8726c31827ea738051dc8226963f640c3a311bff2d4862597c0",
+    "core.py": "12c04d9aff50751b32d77c8798cecb99ea8444a1928b361694ebf9ba1f01ed05",
+    "inventory.py": "22f74babc974ac2a265746fc87c68a691bf830ebd9bc54b94be433c78e7dcb48",
+    "make_fixture.py": "650d05273a2b2195c239ec3e40994fe5b837172da35bf219278719636aa9a2e3",
+    "prepare_dataset.py": "6ac5fedaa42245dc09658e06a7dcd2128323384ebbf696c362645cc5755cb062",
+    "report_assets.py": "218047a6641cd04593e1d2ee5185e644426b27dc548b40ba081bc09f207bccbc",
+    "run.py": "8760912e1ab398c12d160a036f7dd3a9bd0c66954a3a0767081b99d4544665d3",
+    "score_repairs.py": "70b89c054cfc12220cd849ad7fb96126c221049a64f28c561cdfc886a10f9558",
+    "seal.py": "422bd8997a2c5c04220a123335c589c1bdc1e273ba795003f99d24a66a00cf43",
+    "statistics.py": "af3517441394eee123b057793878a219b07d8e155bf3d74f3d243a192aea27eb",
+    "synthetic_diagnosis.py": "34717d4c761d67a472607533f27bae1d07d14cbdae69bad35c61394b8186a0e2",
+    "telemetry.py": "6b061c5cf2616d6883571f6c31b75651134a250eb34cb678776bbc6c5eb4dcab",
+    "train_diagnosis.py": "133235a2b3a6ed2c08aa7d247f9c91f1b3117203b69fcf38c0eac80be67b267b",
+    "__init__.py": "f7e2bf6442ab87460e05d2ac2410bc28b6d755e30168940f9f9a943f8288a454"
+  },
+  "platform": "Windows-10-10.0.26200-SP0",
+  "prompts": {
+    "generate": "Answer the user question using only visible image evidence. Return JSON {\"response\":\"answer\"}. State uncertainty when the image is insufficient.",
+    "detect": "Inspect the image, user question and original response. Return JSON: {\"claims\":[{\"text\":\"atomic assertion\", \"source\":\"exact response substring\", \"type\":\"object|attribute|relation|counting|spatial|ocr|reasoning|knowledge|unsupported_inference|grounding|unknown\", \"risk\":0.5,\"verdict\":\"supported|contradicted|unresolved\",\"reason\":\"visual evidence or limitation\"}]}. Risk is your uncertainty estimate, not a ground-truth probability. Do not treat the user's assertions as facts.",
+    "repair": "Reinspect the image and correct the response to the original question. Use the specified action to focus verification; supplied evidence is fallible. Return JSON {\"response\":\"complete corrected answer\"}. Preserve supported details; do not add guesses.",
+    "verify": "Independently inspect the image, question and candidate response. Return JSON {\"supported\":true, \"answers_question\":true, \"reason\":\"explanation\"}. Use false when contradicted or incomplete, null when unverifiable. Do not approve omission of information required by the question."
+  },
+  "inventory": {
+    "n": 1,
+    "groups": 1,
+    "images": 1
+  },
+  "live": false,
+  "total_seconds": 0.11400140000114334,
+  "memory": {
+    "sampled_peak_client_rss_bytes": 25935872,
+    "sample_count": 2,
+    "sample_interval_seconds": 0.05,
+    "note": "sampled client RSS; may miss short peaks; excludes remote server memory"
+  },
+  "traces": [
+    {
+      "id": "controlled-edit-001",
+      "group_id": "COCO_val2014_000000075591",
+      "split": "development",
+      "strategy": "original",
+      "seed": 42,
+      "original_response": "There are three dogs on the bed. One black dog is positioned on the left, another black dog is positioned on the right, and a tortoiseshell dog is positioned in the foreground, centered between the other two.",
+      "final_response": "There are three dogs on the bed. One black dog is positioned on the left, another black dog is positioned on the right, and a tortoiseshell dog is positioned in the foreground, centered between the other two.",
+      "status": "kept_original",
+      "action": "accept",
+      "candidate": null,
+      "detection": null,
+      "verification": null,
+      "events": [],
+      "wall_seconds": 1.3799999578623101e-05
+    },
+    {
+      "id": "controlled-edit-001",
+      "group_id": "COCO_val2014_000000075591",
+      "split": "development",
+      "strategy": "uniform_self_correction",
+      "seed": 42,
+      "original_response": "There are three dogs on the bed. One black dog is positioned on the left, another black dog is positioned on the right, and a tortoiseshell dog is positioned in the foreground, centered between the other two.",
+      "final_response": "There are three cats on the bed. One black cat is positioned on the left, another black cat is positioned on the right, and a tortoiseshell cat is positioned in the foreground, centered between the other two.",
+      "status": "accepted_repair",
+      "action": "visual_recheck",
+      "candidate": "There are three cats on the bed. One black cat is positioned on the left, another black cat is positioned on the right, and a tortoiseshell cat is positioned in the foreground, centered between the other two.",
+      "detection": {
+        "claims": [
+          {
+            "text": "There are three dogs on the bed.",
+            "source": "There are three dogs on the bed.",
+            "type": "counting",
+            "risk": 0.1,
+            "verdict": "contradicted",
+            "reason": "The animals in the image are cats, not dogs.",
+            "span": [
+              0,
+              32
+            ]
+          },
+          {
+            "text": "One black dog is positioned on the left",
+            "source": "One black dog is positioned on the left",
+            "type": "object",
+            "risk": 0.1,
+            "verdict": "contradicted",
+            "reason": "The animal on the left is a black cat.",
+            "span": [
+              33,
+              72
+            ]
+          },
+          {
+            "text": "another black dog is positioned on the right",
+            "source": "another black dog is positioned on the right",
+            "type": "object",
+            "risk": 0.1,
+            "verdict": "contradicted",
+            "reason": "The animal on the right is a black cat.",
+            "span": [
+              74,
+              118
+            ]
+          },
+          {
+            "text": "a tortoiseshell dog is positioned in the foreground",
+            "source": "a tortoiseshell dog is positioned in the foreground",
+            "type": "object",
+            "risk": 0.1,
+            "verdict": "contradicted",
+            "reason": "The animal in the foreground is a tortoiseshell cat.",
+            "span": [
+              124,
+              175
+            ]
+          }
+        ]
+      },
+      "verification": {
+        "supported": true,
+        "answers_question": true,
+        "reason": "The image shows three cats on a bed. There is a tortoiseshell cat in the foreground and two black cats in the background, one on the left and one on the right. The description accurately reflects the visual information."
+      },
+      "risk": 0.1,
+      "events": [
+        {
+          "key": "ab9bf0c505d27c0b6d169fd2b34300b81c02352b9b4f1baf56250b0f6a21da67",
+          "stage": "detect",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": {
+            "promptTokenCount": 1266,
+            "candidatesTokenCount": 334,
+            "totalTokenCount": 1600,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 177
+              },
+              {
+                "modality": "IMAGE",
+                "tokenCount": 1089
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "recorded_seconds": 4.288525699999809
+        },
+        {
+          "key": "f7326719f0892a3175e3154f2b17cd988592f1a77e6cc97bd9a022fb83abba74",
+          "stage": "repair",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": {
+            "promptTokenCount": 1509,
+            "candidatesTokenCount": 48,
+            "totalTokenCount": 1557,
+            "promptTokensDetails": [
+              {
+                "modality": "IMAGE",
+                "tokenCount": 1089
+              },
+              {
+                "modality": "TEXT",
+                "tokenCount": 420
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "recorded_seconds": 4.816461200000049
+        },
+        {
+          "key": "51aa39f697ccd0a3bdcd364a794b80c4c2c60292045645f28711d39ceeaf22a7",
+          "stage": "verify",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": {
+            "promptTokenCount": 1212,
+            "candidatesTokenCount": 61,
+            "totalTokenCount": 1700,
+            "promptTokensDetails": [
+              {
+                "modality": "IMAGE",
+                "tokenCount": 1089
+              },
+              {
+                "modality": "TEXT",
+                "tokenCount": 123
+              }
+            ],
+            "thoughtsTokenCount": 427,
+            "serviceTier": "standard"
+          },
+          "recorded_seconds": 4.61127260000103
+        }
+      ],
+      "wall_seconds": 0.0003226000007998664
+    },
+    {
+      "id": "controlled-edit-001",
+      "group_id": "COCO_val2014_000000075591",
+      "split": "development",
+      "strategy": "full",
+      "seed": 42,
+      "original_response": "There are three dogs on the bed. One black dog is positioned on the left, another black dog is positioned on the right, and a tortoiseshell dog is positioned in the foreground, centered between the other two.",
+      "final_response": "There are three cats on the bed. One black cat is positioned on the left, another black cat is positioned on the right, and a tortoiseshell cat is positioned in the foreground, centered between the other two.",
+      "status": "accepted_repair",
+      "action": "recount",
+      "candidate": "There are three cats on the bed. One black cat is positioned on the left, another black cat is positioned on the right, and a tortoiseshell cat is positioned in the foreground, centered between the other two.",
+      "detection": {
+        "claims": [
+          {
+            "text": "There are three dogs on the bed.",
+            "source": "There are three dogs on the bed.",
+            "type": "counting",
+            "risk": 0.1,
+            "verdict": "contradicted",
+            "reason": "The animals in the image are cats, not dogs.",
+            "span": [
+              0,
+              32
+            ]
+          },
+          {
+            "text": "One black dog is positioned on the left",
+            "source": "One black dog is positioned on the left",
+            "type": "object",
+            "risk": 0.1,
+            "verdict": "contradicted",
+            "reason": "The animal on the left is a black cat.",
+            "span": [
+              33,
+              72
+            ]
+          },
+          {
+            "text": "another black dog is positioned on the right",
+            "source": "another black dog is positioned on the right",
+            "type": "object",
+            "risk": 0.1,
+            "verdict": "contradicted",
+            "reason": "The animal on the right is a black cat.",
+            "span": [
+              74,
+              118
+            ]
+          },
+          {
+            "text": "a tortoiseshell dog is positioned in the foreground",
+            "source": "a tortoiseshell dog is positioned in the foreground",
+            "type": "object",
+            "risk": 0.1,
+            "verdict": "contradicted",
+            "reason": "The animal in the foreground is a tortoiseshell cat.",
+            "span": [
+              124,
+              175
+            ]
+          }
+        ]
+      },
+      "verification": {
+        "supported": true,
+        "answers_question": true,
+        "reason": "The image shows three cats on a bed. There is a tortoiseshell cat in the foreground and two black cats in the background, one on the left and one on the right. The description accurately reflects the visual information."
+      },
+      "risk": 0.1,
+      "events": [
+        {
+          "key": "ab9bf0c505d27c0b6d169fd2b34300b81c02352b9b4f1baf56250b0f6a21da67",
+          "stage": "detect",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": {
+            "promptTokenCount": 1266,
+            "candidatesTokenCount": 334,
+            "totalTokenCount": 1600,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 177
+              },
+              {
+                "modality": "IMAGE",
+                "tokenCount": 1089
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "recorded_seconds": 4.288525699999809
+        },
+        {
+          "key": "602d98fda320b45264e4e8d73c5108cd64c1eef9218b2c7348dbb2978d4d8d16",
+          "stage": "repair",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": {
+            "promptTokenCount": 1506,
+            "candidatesTokenCount": 48,
+            "totalTokenCount": 1554,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 417
+              },
+              {
+                "modality": "IMAGE",
+                "tokenCount": 1089
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "recorded_seconds": 4.455948499999067
+        },
+        {
+          "key": "51aa39f697ccd0a3bdcd364a794b80c4c2c60292045645f28711d39ceeaf22a7",
+          "stage": "verify",
+          "replayed": true,
+          "network_calls": 0,
+          "recorded_usage": {
+            "promptTokenCount": 1212,
+            "candidatesTokenCount": 61,
+            "totalTokenCount": 1700,
+            "promptTokensDetails": [
+              {
+                "modality": "IMAGE",
+                "tokenCount": 1089
+              },
+              {
+                "modality": "TEXT",
+                "tokenCount": 123
+              }
+            ],
+            "thoughtsTokenCount": 427,
+            "serviceTier": "standard"
+          },
+          "recorded_seconds": 4.61127260000103
+        }
+      ],
+      "wall_seconds": 0.00016250000044237822
+    }
+  ],
+  "errors": [],
+  "scientific_status": "unscored; independent adjudication required"
+}

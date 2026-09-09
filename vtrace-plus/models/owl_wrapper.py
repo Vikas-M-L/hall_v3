@@ -36,6 +36,7 @@ def parse_count(claim: str) -> tuple[int | None, str | None]:
     raw = m.group("num").lower()
     num = int(raw) if raw.isdigit() else NUM_WORDS.get(raw)
     label = re.sub(r"^(a|an|the)\s+", "", m.group("label").strip(), flags=re.I)
+    label = re.split(r"\s+(?:is|are|was|were|has|have)\b", label, maxsplit=1, flags=re.I)[0]
     if not label:
         return None, None
     return num, label
@@ -63,14 +64,21 @@ class OWLDetector:
         out = self.model(**inputs)
         res = self.processor.post_process_grounded_object_detection(
             out, threshold=threshold, target_sizes=[image.size[::-1]])[0]
-        n_lab = len(labels)
-        per = {lab: {"count": 0, "top_score": 0.0, "boxes": []} for lab in labels}
+        from models.boxes import suppress
+        per = {lab: {"count": 0, "top_score": 0.0, "boxes": [], "scores": []} for lab in labels}
         for box, score, lab_idx in zip(res["boxes"], res["scores"], res["labels"]):
-            lab = labels[int(lab_idx) % n_lab]
-            x0, y0, x1, y1 = (int(v) for v in box.tolist())
-            per[lab]["count"] += 1
-            per[lab]["top_score"] = max(per[lab]["top_score"], float(score))
-            per[lab]["boxes"].append((x0, y0, x1, y1))
+            idx = int(lab_idx)
+            if not 0 <= idx < len(labels):
+                raise ValueError("detector returned an invalid query label")
+            lab = labels[idx]
+            per[lab]["boxes"].append(box.tolist())
+            per[lab]["scores"].append(float(score))
+        for record in per.values():
+            kept = suppress(record["boxes"], record["scores"], *image.size)
+            record.update(count=len(kept), boxes=[b for b, _ in kept],
+                          scores=[s for _, s in kept], top_score=max((s for _, s in kept), default=0.0),
+                          nms_iou=0.5, score_threshold=threshold,
+                          note="Detected candidates after NMS; missed instances remain possible.")
         return per
 
 

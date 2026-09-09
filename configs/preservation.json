@@ -1,0 +1,10 @@
+{
+  "status": "development",
+  "seed": 42,
+  "threshold": 0.5,
+  "model": "gemini-3.1-flash-lite",
+  "verifier_model": "gemini-3-flash-preview",
+  "max_calls": 16,
+  "timeout": 60,
+  "strategies": ["original", "detect_then_fixed", "preservation_fixed", "preservation_full", "preservation_gate_disabled"]
+}

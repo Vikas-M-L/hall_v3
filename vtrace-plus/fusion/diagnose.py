@@ -40,8 +40,8 @@ REPAIR_FOR = {
            "cropped zoom; perception, not knowledge, failed.", "cheap"),
     "M3": ("abstain or hedge", "Report uncertainty instead of answering; "
            "do not decode further.", "free"),
-    "M4": ("relation verification", "Isolate the pair ('the blue cup', 'left') "
-           "and ask the VLM one YES/NO question about the relation.", "1 VLM call"),
+    "M4": ("relation verification", "Identify the entities in this claim and "
+           "verify their stated relationship separately from their existence.", "1 VLM call"),
 }
 
 
@@ -66,13 +66,26 @@ def diagnose(risk: float, evidence_risk: float, similarity_risk: float,
     if count_match is False:
         reasons.append("detector count disagrees with claimed number")
         return _out("M2", reasons)
-    if vlm_supported is False and risk >= 0.4:
+    if vlm_supported is False:
         reasons.append("VLM directly refuted the claim")
-        # Refutation + weak grounding = perception; + strong grounding = binding.
-        if evidence_risk == evidence_risk and evidence_risk < 0.45:
-            reasons.append("yet CLIP grounding is strong: parts match, arrangement does not")
+        if claim_type in ("count", "counting"):
+            reasons.append("Count-bearing claim was refuted; verify both the number and any accompanying action.")
+            result = _out("M2", reasons)
+            result["action"] = "Recount the named objects and separately verify the claimed activity; the VLM explanation is evidence, not ground truth."
+            return result
+        if claim_type == "attribute":
+            reasons.append("An attribute claim was refuted; similarity alone cannot identify the cause.")
+            result = _out("M2", reasons)
+            result["name"] = "Possible perceptual / attribute error"
+            result["repair"] = "attribute verification"
+            result["action"] = "Check the named object's visible property (such as color or clothing type) separately. Confirm any proposed correction against the image."
+            return result
+        # A relation hypothesis needs a relation-bearing claim, not merely
+        # strong image/text compatibility. It is still not causal proof.
+        if claim_type in ("spatial", "relation"):
+            reasons.append("A relation-bearing claim was refuted; binding failure is a hypothesis requiring a focused check.")
             return _out("M4", reasons)
-        reasons.append("visual grounding is weak")
+        reasons.append("Claim refuted; a perceptual error is a hypothesis, not an established cause.")
         return _out("M2", reasons)
 
     if risk < 0.4:

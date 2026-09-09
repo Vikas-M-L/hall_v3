@@ -171,11 +171,9 @@ def fig5_latency(pool: dict):
 
 
 if __name__ == "__main__":
-    pool = load_pooled()
-    print("pooled unique claims:", len(pool))
-    fig1_architecture()
-    fig2_baseline(pool)
-    fig3_gbm()
-    fig4_ablation(pool)
-    fig5_latency(pool)
-    print("wrote", sorted(p.name for p in FIGS.glob("*.png")))
+    raise SystemExit(
+        "Legacy figure generator retired: mismatched cohorts and mislabeled "
+        "latency/cascade figures. Run python -m research.analyze, "
+        "python -m research.synthetic_diagnosis, and python -m research.report_assets "
+        "from the repository root. Historical figures remain archived."
+    )

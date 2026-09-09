@@ -1,5 +1,45 @@
 # V-TRACE+
 
+## Current Checker workflow
+
+The Checker now uses `studio_service.py` and stores each completed analysis in
+session state. Changing the selected fact or overlay does not repeat inference.
+Changed inputs/settings are marked as stale until **Run verification** is clicked.
+
+- Local extraction separates supported count/activity and clothing/color
+  patterns. Example: `5 cats are eating` becomes presence, count and activity.
+  Unsupported grammar and hedges remain explicit full-claim-check candidates;
+  local rules do not claim complete natural-language atomic decomposition.
+- Optional Gemini decomposition handles more complex text, but its output is
+  still a set of model-generated candidate facts, not gold annotations.
+- Fact cross-checks prioritize count, activity, attribute, spatial and OCR
+  claims. Unchecked specialized facts stay unresolved; an explicit budget limits
+  calls. **Verify all facts** is an optional, more expensive operation.
+- **Original image** is the default visualization. **Detector candidates**
+  displays stored OWL-ViT boxes after class-wise NMS and coordinate clipping.
+  **Similarity crop** is opt-in and explicitly not an object bounding box.
+- **Propose correction and verify** generates a candidate on a separate click,
+  verifies all extracted facts, and checks support and relevance against the
+  original question. A failure rejects the candidate; the original is retained.
+  Model approval does not replace independent human evaluation.
+- Strict JSON exports include facts, extraction status, recorded boxes,
+  optional evidence, final decisions, timings and correction checks. Nonfinite
+  scores are exported as `null` rather than invalid JSON `NaN`.
+
+There is no new dedicated OCR model or validated semantic action detector.
+Those questions use the optional focused VLM check or remain unresolved.
+Calibration tooling and independent evaluation protocols are under `../research/`;
+natural annotations and publication-level accuracy experiments are still pending.
+
+> **Research audit (2026-09-09):** The historical descriptions below are retained
+> as implementation notes, not validated research claims. Read
+> [`../research_audit.md`](../research_audit.md),
+> [`../claim_audit.md`](../claim_audit.md) and the root README first.
+> Score windows are not probability calibration; the standalone GBM is trained
+> on synthetic data and remains offline; the LoRA launcher is quarantined.
+> Matched-coverage reanalysis finds no v3 advantage over confidence selection.
+> The audited research entry points are under `../research/`.
+
 Claim-level hallucination risk scoring for vision-language models. Every model is
 frozen and used for inference only. There is no training loop, no labelled dataset
 requirement, and no train/val/test split anywhere in this repo. The only thing

@@ -1,0 +1,9 @@
+{
+  "status": "development_not_connected_to_studio",
+  "algorithm": "sklearn.ensemble.GradientBoostingClassifier",
+  "parameters": {"n_estimators": 150, "learning_rate": 0.05, "max_depth": 3, "random_state": 42, "loss": "log_loss"},
+  "optimizer": "stagewise tree boosting; no neural optimizer",
+  "batch_size": null,
+  "epochs": null,
+  "data_requirement": "real natural labels required for scientific diagnosis claims"
+}

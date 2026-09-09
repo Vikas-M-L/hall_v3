@@ -1,0 +1,1 @@
+{"id": "fixture-count", "group_id": "fixture-scene", "image": "not-a-real-image.jpg", "image_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "question": "How many cats?", "response": "There are three cats.", "split": "fixture"}

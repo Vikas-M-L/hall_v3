@@ -6,6 +6,7 @@ import io
 import streamlit as st
 
 import studio_lib as L
+from fusion.decision import finalize, PRESENTATION
 
 st.set_page_config(page_title="Autopsy — V-TRACE+ Studio", layout="wide")
 st.markdown(L.CSS, unsafe_allow_html=True)
@@ -42,7 +43,7 @@ else:
     sel = st.selectbox("Claim to autopsy:",
                        [f"#{i+1} {c['claim_text'][:60]} ({c['risk']:.2f})"
                         for i, c in enumerate(claims)], index=0)
-    c = claims[int(sel.split()[0][1:]) - 1]
+    c = finalize(claims[int(sel.split()[0][1:]) - 1])
     claim_text, risk = c["claim_text"], c["risk"]
     ev = {"evidence": 1 - c["risks"].get("evidence", float("nan")),
           "similarity": 1 - c["risks"].get("clip_similarity", float("nan")),
@@ -55,9 +56,12 @@ else:
 
 # 1 — claim + risk
 vtext, vcls = L.verdict_of(risk)
+if run is not None:
+    vtext, vcls, _ = PRESENTATION[c["final_decision"]["verdict"]]
+    st.caption("Final decision: " + " ".join(c["final_decision"]["reasons"]))
 pct = 0 if risk != risk else int(risk * 100)
 st.markdown(f"<div class='card'><b style='font-size:18px'>{claim_text}</b><br>"
-            f"<span class='badge {vcls}'>RISK {risk:.3f} — {vtext}</span>"
+            f"<span class='badge {vcls}'>{vtext}</span> — raw fusion risk {risk:.3f}"
             f"<div class='risk-bar'><div class='risk-fill' style='width:{pct}%;"
             f"background:{L.bar_of(risk)}'></div></div></div>", unsafe_allow_html=True)
 
@@ -98,25 +102,16 @@ st.markdown(f"<div class='card'><b>{dg['mechanism']} — {dg['name']}</b><ul>"
             + "".join(f"<li>{x}</li>" for x in dg["reasons"]) + "</ul></div>",
             unsafe_allow_html=True)
 
-# 4 — visual proof (recomputed box, cached model)
-st.subheader("Visual proof")
-try:
-    clip = L.get_clip("google/siglip-base-patch16-224", -0.10, 0.12, True)
-    regions = clip.encode_regions(image)
-    _s, box, whole = clip.evidence(claim_text, regions)
-    if box is not None and not whole:
-        from PIL import ImageDraw as _D
-
-        ov = image.copy()
-        d = _D.Draw(ov)
-        x0, y0, x1, y1 = box
-        for w in range(4):
-            d.rectangle([x0 - w, y0 - w, x1 + w, y1 + w], outline=(52, 211, 153))
-        st.image(ov, caption="Best-match region", use_container_width=True)
-    else:
-        st.image(image, caption="Matched globally — no local box.", use_container_width=True)
-except Exception as exc:
-    st.image(image, caption=f"Proof unavailable: {exc}", use_container_width=True)
+# Show only evidence recorded with this run; never silently recompute with
+# another checkpoint and present it as the original box.
+st.subheader("Recorded visual evidence")
+from models.boxes import overlay
+det = c.get("detector_evidence") if run is not None else None
+if det and det.get("boxes"):
+    st.image(overlay(image, det["boxes"], det.get("label", "candidate")),
+             caption="Stored detector candidates after duplicate suppression; not ground truth.", use_container_width=True)
+else:
+    st.image(image, caption="Original image. No detector bounding boxes stored for this claim.", use_container_width=True)
 
 # 5 — repair
 st.subheader("Repair")

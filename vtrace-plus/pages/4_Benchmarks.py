@@ -7,6 +7,21 @@ import studio_lib as L
 
 st.set_page_config(page_title="Benchmarks — V-TRACE+ Studio", layout="wide")
 st.markdown(L.CSS, unsafe_allow_html=True)
+st.warning("Research audit: legacy results below are development-exposed object-phrase "
+           "compatibility scores, not a validated end-to-end repair benchmark. "
+           "Repeated claims/images inflate the old row counts. See the audited comparison first.")
+import json
+audit_path = L.REPO_ROOT.parent / "results" / "audited" / "report.json"
+if audit_path.exists():
+    import pandas as pd
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+    st.subheader("Audited matched-cohort comparison")
+    st.dataframe(pd.DataFrame([
+        {"method": name, **{k: m[k] for k in ("n", "images", "accuracy", "f1", "auroc", "ece", "brier")}}
+        for name, m in audit["matched_cohort"]["methods"].items()]))
+    st.info("After deduplication, each v3 run correctly decides 10 of 17 claims. "
+            "Confidence-only SigLIP selection also gets 10/10 at that coverage. "
+            "These records do not establish a pairwise-v3 advantage.")
 st.markdown("<div class='hero-title'>Real <span class='grad'>Benchmarks</span></div>",
             unsafe_allow_html=True)
 st.markdown("<div class='hero-sub'>COCO images + POPE labels, three splits, "
@@ -53,11 +68,11 @@ for name in ("pope_v3_s3.json", "pope_v3_s4.json"):
                         "v3 unresolved": a["n_unresolved"]})
 if rows_v3:
     st.dataframe(pd.DataFrame(rows_v3), use_container_width=True)
-    st.success("v3 never issued a wrong decisive verdict on these runs: it decided "
-               "47–67% of claims at 100% accuracy and abstained on the rest — "
-               "vs v1 forced to answer everything at 67–80%. Abstention is a "
-               "measured capability, not a loss.")
+    st.caption("Historical, non-deduplicated summaries. Comparing selective accuracy "
+               "to forced-answer accuracy alone does not establish superiority; "
+               "the matched-coverage baseline ties v3 on these development cases.")
 
 st.info("Read honestly: pooled n=67 unique claims — siglip-whole AUROC 0.933/F1 0.905, "
         "clipB32-grid 0.954/0.928 (n=50). Claims are parsed from POPE questions, "
-        "not VLM responses — a Gemini key closes that gap. Full 9000-item run needs a GPU.")
+         "not VLM responses. Generated answers, independent gold and complete baseline "
+         "runs are still required. Larger CPU evaluation is possible but slower.")

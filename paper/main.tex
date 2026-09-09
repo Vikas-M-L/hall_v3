@@ -1,237 +1,332 @@
 \documentclass[conference]{IEEEtran}
-\IEEEoverridecommandlockouts
-\usepackage{cite}
-\usepackage{amsmath,amssymb}
-\usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage{url}
-
+\usepackage{amsmath,amssymb,graphicx,booktabs,url}
+\newcommand{\missing}{\textbf{N/A: experiment required}}
+\graphicspath{{../results/audited/figures/}}
 \begin{document}
-
-\title{V-TRACE+: Inference-Time Hallucination Diagnosis and Repair Routing\\
-for Vision-Language Models}
-
-\author{\IEEEauthorblockN{Swati\textsuperscript{1}, Vaishnavi\textsuperscript{1},
-Vikas M L\textsuperscript{1}, Lakshmi Shree M S\textsuperscript{1}}
-\IEEEauthorblockA{\textsuperscript{1}Department of Computer Science and Engineering,\\
-Cambridge Institute of Technology, KR Puram, Bengaluru -- 560036, India\\
-swati.23cse@cambridge.edu.in, vaishnavi.23cse@cambridge.edu.in,\\
-vikas.23cse@cambridge.edu.in, lakshmi.cse@cambridge.edu.in}
-}
-
+\title{V-TRACE+: Auditing Diagnosis-Aware Hallucination Detection,\\Repair Routing, and Verification for Vision-Language Models}
+\author{\IEEEauthorblockN{Swati, Vaishnavi, Vikas M L, Lakshmi Shree M S}
+\IEEEauthorblockA{Department of Computer Science and Engineering\\
+Cambridge Institute of Technology, KR Puram, Bengaluru--560036, India\\
+swati.23cse@cambridge.edu.in, vaishnavi.23cse@cambridge.edu.in\\
+vikas.23cse@cambridge.edu.in, lakshmi.cse@cambridge.edu.in}}
 \maketitle
 
 \begin{abstract}
-Vision-language models hallucinate confidently, and confidence alone does not
-reveal the failure mechanism. Existing detectors focus on binary detection
-rather than diagnosis and repair. V-TRACE+ decomposes model output into atomic
-claims, verifies each with complementary frozen signals (SigLIP/CLIP regions,
-OWL-ViT detection counts, Gemini cross-checks), fuses evidence into risk,
-predicts one of five mechanisms M0--M4, and routes the cheapest matching
-repair --- all on CPU. On 67 unique POPE items the verifier reaches AUROC
-0.933--0.954 with F1 up to 0.928; a VLM judge agrees with labels on 16/17
-claims; the GBM diagnoser scores 0.98 accuracy on taxonomy-shaped data; and a
-measured cascade analysis quantifies free-signal resolution rates. Contribution:
-claim-level diagnosis + repair routing + CPU-friendly inference with printed
-limits.
+Hallucination detection is useful only if subsequent intervention improves
+grounding without discarding correct answers. We audit V-TRACE+, a CPU-friendly
+visual-compatibility prototype with optional remote vision-language inference,
+and formulate a reproducible diagnosis--route--repair--verify protocol.
+Reanalysis of archived POPE-derived predictions identifies 67 unique
+image--claim pairs from 34 images. On the common 32-claim, 18-image cohort,
+CLIP-grid obtains AUROC 0.955 and F1 0.955, while whole-image SigLIP obtains
+0.932 and 0.930. These are exploratory compatibility results, not standard
+generated-answer POPE results. After deduplication, each of two selective
+prediction runs correctly decides 10 of 17 claims; a confidence-only baseline
+matches this performance at identical coverage. A standalone diagnosis
+classifier achieves 0.980 accuracy on synthetic holdout data, but only
+0.301--0.319 after a controlled count-pattern shift. We report these negative
+findings and release label-isolated evaluation, recorded API smoke traces,
+image-cluster statistics, and a preservation-aware repair protocol. Superiority
+of diagnosis-aware repair routing remains an untested hypothesis.
 \end{abstract}
-
 \begin{IEEEkeywords}
-vision-language models, hallucination detection, failure attribution, repair
-routing, POPE benchmark, CPU inference.
+vision-language models, hallucination, selective prediction, repair verification,
+reproducibility, evaluation audit
 \end{IEEEkeywords}
 
 \section{Introduction}
-VLMs assert false claims with high confidence: invented objects, wrong counts,
-misbound attributes. Binary detectors output one scalar, yet identical scores
-hide opposite causes --- a prior-driven ``fork on the table'' needs
-contrastive decoding while a genuinely-strained misread needs abstention or
-zoom. V-TRACE+ reframes the task from \textit{is it wrong?} to \textit{why is
-it wrong, and what repair does that imply?} A full sentence mixes correct and
-hallucinated facts (``two cats'' $\checkmark$, ``pink sofa'' $\checkmark$,
-``red ball'' $\times$), so verification is claim-level. Contributions: (1)
-atomic decomposition + multi-signal verification on CPU; (2) deterministic
-evidence fusion with a negation fix; (3) M0--M4 mechanism diagnosis with repair
-routing; (4) measured cost cascade; (5) real POPE numbers with CIs and an
-evidence audit. No model is trained for verification itself; all backbones are
-frozen.
+Vision-language models (VLMs) can mention absent objects, miscount instances,
+misattribute properties, or assert unsupported relations. A description can
+contain supported and unsupported facts simultaneously. Decomposing responses
+into claims permits localized inspection, but neither a similarity score nor
+a fluent explanation establishes factual correctness or a latent failure cause.
+Moreover, reducing hallucination by abstaining or shortening an answer may
+reduce its usefulness. We therefore ask: \emph{can predicted error-type routing
+improve verified answer correctness and preservation over uniform or
+detection-only intervention at matched cost and coverage?}
 
-\section{Related Work}
-POPE~\cite{li2023pope} evaluates object hallucination with yes/no probes across
-random/popular/adversarial splits and is our benchmark. Mitigations (VCD~\cite{leng2024vcd},
-OPERA, HALC, Woodpecker~\cite{yin2023woodpecker}, LURE) are mostly uniform and
-LLaVA-centric; none routes by diagnosed mechanism. M3ID~\cite{favero2024m3id}
-and VCD's contrast share the PMI quantity we repurpose as a diagnostic feature
-(routing, not the ratio, is our claim). SelfCheckGPT~\cite{manakul2023selfcheckgpt}
-sampling is our uncertainty signal. CLIP~\cite{radford2021clip},
-SigLIP~\cite{zhai2023siglip} and OWL-ViT~\cite{minderer2022owlvit} are frozen
-verifiers. GBM classifiers~\cite{friedman2001gbm} suit conjunction-shaped
-taxonomies.
+This paper is an audit and research-protocol report, not a claim of a completed
+new benchmark or state-of-the-art mitigation. Its contributions are: (i) a
+traceable reanalysis correcting cohort and selective-baseline comparisons;
+(ii) a controlled failure of a synthetic diagnosis classifier under feature
+shift; and (iii) an executable, label-isolated closed-loop protocol with
+explicit rejected repairs and measured call traces. Claims of improved
+natural-data repair utility are reserved for independently annotated tests.
 
-\section{Methodology}
-\subsection{Claim decomposition}
-Responses split into atomic, independently checkable claims with character
-spans (VLM JSON decomposition, sentence-split fallback). Categories: object,
-attribute, count, spatial, relation, action, OCR, scene. Atomicity matters
-because one sentence routinely mixes supported and invented content.
+\section{Related Work and Novelty Boundary}
+CHAIR evaluates object hallucination in captions against visual labels
+\cite{chair}; POPE uses object-presence questions with different negative
+sampling schemes \cite{pope}. AMBER covers existence, attributes and relations
+\cite{amber}; HallusionBench probes visual illusion and language hallucination
+\cite{hallusion}. MMHal-Bench originates in factually augmented RLHF
+\cite{rlhf}, while M-HalDetect supplies fine-grained annotations and preference
+optimization \cite{mhal}.
 
-\subsection{Verification modules}
-\textbf{SigLIP/CLIP} give region-max \textit{evidence} and whole-image
-\textit{similarity} --- visual support signals, never final classifiers.
-\textbf{OWL-ViT} draws one box per instance for existence/counting (``3 cats''
-vs 2 detected $\rightarrow$ counting error). \textbf{Gemini} describes,
-decomposes, temperature-samples (self-consistency uncertainty) and YES/NO
-cross-checks ambiguous claims. Qwen2.5-VL confidence/counterfactual paths are
-implemented but GPU-gated (unexecuted here).
+Atomic fact extraction and verification are established by FaithScore
+\cite{faith}. Woodpecker already combines concept extraction, visual validation
+and hallucination correction \cite{wood}. VCD contrasts original/distorted
+visual inputs \cite{vcd}; OPERA modifies decoding using over-trust penalties
+\cite{opera}; HALC uses adaptive focal grounding \cite{halc}. M3ID amplifies
+visual information against language priors \cite{m3id}. Therefore these
+components are not individually novel here.
 
-\subsection{Evidence fusion}
-Signals convert to risk orientation (higher = worse) and fuse: v1 equal
-weights; v2 adaptive (confidence$-$evidence gap shifts weight to visual
-signals; detector disagreement promotes independent CLIP). Negated claims
-(``no X'') invert match$\rightarrow$risk, flagged. Fig.~\ref{fig:arch} shows
-the pipeline.
+Selective classification \cite{selective}, probability calibration
+\cite{calibration}, sampling consistency \cite{selfcheck} and cost-aware model
+routing \cite{route} also precede this project. Particularly, VISOR explicitly
+couples visual/prior diagnosis with routed remediation \cite{visor}; this
+invalidates a broad ``first diagnosis-to-routing'' claim. Recent evaluation
+work cautions that conservative generation may improve hallucination scores
+while harming informativeness \cite{safe}. The unresolved contribution is
+\emph{preservation-aware, cost-matched intervention selection}, not the mere
+presence of a taxonomy or router.
 
-\begin{figure}[htbp]
-\centerline{\includegraphics[width=0.48\textwidth]{figs/fig1_architecture_bw.png}}
-\caption{V-TRACE+ inference pipeline. Cheap signals decide easy claims; the
-VLM fires only on ambiguity.}
-\label{fig:arch}
+\section{Problem Formulation and Taxonomy}
+Inputs are image $I$, question $q$, and original VLM response $a$. A decomposer
+produces claims $c_i$ and exact source spans where possible. Independent gold
+annotations record claim truth, required answer information, error content,
+and corrected answers. Gold is never supplied to detection, routing, repair,
+or candidate verification.
+
+We separate observable \emph{error content}---object, attribute, counting,
+spatial, relation, OCR, reasoning, knowledge, unsupported inference---from
+unobserved \emph{mechanisms}. Legacy M0--M4 labels mix these concepts: the live
+rule system uses no fault, prior override, perception/count, uncertainty and
+binding; the offline classifier uses grounded, object, count, conflicting
+evidence and spatial/relation. These labels are hypotheses and engineering
+categories, not established causal ground truth. Unknown/ambiguous evidence
+must remain representable rather than forced into a confident mechanism.
+
+\section{Architecture and Evidence Attribution}
+\begin{figure}[t]
+\centering\includegraphics[width=\columnwidth]{architecture_audited.pdf}
+\caption{Audited closed-loop protocol. Prediction inputs exclude gold. An
+accepted candidate must pass both visual-support and question-relevance checks.
+This figure describes an implementation/protocol, not measured superiority.}
+\label{fig:architecture}
 \end{figure}
+The legacy Studio supports user text or Gemini description/decomposition.
+Its local fallback splits sentences and does not guarantee atomic facts.
+Frozen CLIP/SigLIP encoders compare claims to the full image and grid crops.
+OWL-ViT supplies open-vocabulary proposals for optional counting. Gemini
+supplies descriptions, lexical sampling-consistency inputs and YES/NO
+cross-checks. Local execution is CPU-compatible; remote API execution is not
+CPU-only total compute. Qwen is optional and not required by the final API path.
 
-\subsection{M0--M4 diagnosis model}
-Five-class Gradient Boosting classifier (150 trees, depth 3, lr 0.05) over six
-features: clip\_similarity, region\_evidence, owl\_count, claimed\_count,
-gemini\_consistency, gemini\_confidence. M0 grounded, M1 object hallucination,
-M2 counting error, M3 uncertain/conflicting, M4 spatial/relation error.
-Training: 1000 taxonomy-shaped rows (200/class), 80/20 stratified split, seed
-42, CPU (scikit-learn). A transparent rule-based diagnoser serves the live
-product; the GBM is the benchmarked counterpart. Qwen+LoRA SFT code exists but
-was \textbf{never run} --- no fine-tuning is claimed.
+For raw cosine $s$, the legacy normalized support is
+\begin{equation}
+u(s)=\operatorname{clip}\left((s-\ell)/(h-\ell),0,1\right),\qquad
+r=\sum_j w_j(1-u_j).
+\end{equation}
+In the evaluated Studio configuration, v1 averages region and whole-image
+risks. v2 changes weights under confidence/evidence discrepancy and detector
+disagreement, but confidence/probe/counterfactual channels are disabled in the
+CPU text path. Optional OWL and Gemini results are auxiliary evidence, not
+validated jointly calibrated probabilities. Legacy negation inversion and v3
+pairwise margins are heuristic; the latter falls back to absolute scores for
+ties. Different cosine windows invalidate cross-model score-gap comparisons.
 
-\subsection{Repair routing and cascade}
-M0$\rightarrow$ACCEPT, M1$\rightarrow$RE-PROMPT, M2$\rightarrow$RECOUNT,
-M3$\rightarrow$ABSTAIN/RECHECK, M4$\rightarrow$RELATION-REASK: cheapest
-effective action first. Cascade: stage-0 free CLIP verdicts; escalate only
-toss-ups. Fig.~\ref{fig:lat} quantifies both latency and free-signal
-resolution.
+The new research runner requires typed atomic claims, predicted error type,
+risk, verdict and reasons. Exact source matching yields spans; absent exact
+matches are null rather than fuzzy ``proof.'' Visual evidence from a model
+must retain its source and uncertainty. A crop chosen by similarity is not
+an independently annotated object box.
+
+\section{Routing, Repair, and Verification}
+\subsection{Preservation-aware acceptance}
+The implemented extension records original facts with stable IDs, source spans
+and observed evidence states. Facts judged supported are protected; this does
+not make them ground truth. A text-only audit aligns every original fact to the
+candidate as preserved, contradicted, omitted or uncertain, requiring exact
+candidate quotes for positive alignment claims. Missing IDs, duplicate IDs,
+unverifiable quotes or incomplete candidate-fact extraction reject the audit.
+Separately, all extracted candidate facts require visual support, and the
+candidate must answer the original question. Acceptance additionally requires
+retention of all protected facts and resolution of previously refuted facts.
+Removal of a refuted fact is recorded separately from correcting an answer.
+
+Predicted-type and fixed-repair arms use the same preservation gate. A
+gate-disabled ablation collects the same audit calls but ignores preservation
+for acceptance, isolating the policy from its additional compute. Contract
+tests show that supported-fact deletion is rejected despite a whole-answer
+judge's approval. Actual API smoke traces exercise a mixed, author-edited
+development response; they have no independent accuracy labels. Consequently,
+natural-data preservation improvement, routing benefit and scientific novelty
+remain \missing. False-positive original support and mistaken semantic
+alignments can still block useful repairs or approve harmful ones.
+
+Actions include visual, attribute, count, spatial/relation, OCR and reasoning
+rechecks, with abstention for unsupported external knowledge. In the current
+research backend these are explicitly named \emph{prompt adaptations}; they
+are not implementations of VCD, an OCR specialist, or a validated causal
+intervention. One bounded candidate repair is generated. A separate verifier
+call receives $I,q,a'$ without the detector's desired verdict and checks
+visual support and whether $a'$ answers $q$. Both checks must be positive to
+accept; rejection retains the original in the trace and abstains. Different
+Gemini versions are not assumed statistically independent.
+
+Controlled arms use the same inputs: original output, detector-only, uniform
+reinspection/correction, detect-then-fixed, surface-type routing, seeded random
+routing, no diagnosis, no final verifier and full loop. Authentic published
+baselines and outcome-trained routing are \missing. Missing model responses
+or malformed outputs cause recorded failures, not synthetic success.
+
+\section{Training Audit}
+The existing offline diagnosis model is sklearn
+\texttt{GradientBoostingClassifier}: 150 estimators, learning rate 0.05,
+maximum depth 3, random state 42, multiclass log loss. It uses six numeric
+features: similarity, regional evidence, detected count, claimed count,
+sampling consistency and a synthetic ``Gemini confidence'' field. Generator
+seed 0 produces 200 rows per class; a stratified split yields 800 training and
+200 holdout rows. There is no neural optimizer, batch size or epoch schedule.
+No natural image-derived diagnosis training is established, and the model is
+not connected to the Studio.
+
+A new CPU training command requires explicit image-group train/calibration
+partitions and rejects test rows. Its natural-data result is \missing.
+Existing Qwen LoRA code has overlapping validation, unmasked prompt labels
+and incomplete multimodal collation; the launcher is quarantined. There is no
+validated LoRA/SFT/DPO checkpoint or training-time/memory result.
 
 \section{Experimental Setup}
-POPE items (lmms-lab-encoder/POPE parquet, COCO images embedded), claims parsed
-from questions (``Is there a {obj}?'' $\rightarrow$ ``a {obj}''), labels from
-answers (no = hallucinated). Deduplicated to 67 unique (image, claim) pairs
-across seeds. Checkpoints: google/siglip-base-patch16-224 (window
-[-0.10,0.12]), openai/clip-vit-base-patch32 ([0.15,0.35]); per-model windows
-are required (bands differ). Hardware: CPU-only desktop, Python 3.11,
-transformers 5.x; per-image latency 3--10\,s for three methods. VLM-judge run:
-17 fresh POPE claims, Gemini YES/NO. GBM: synthetic data above (real-data GBM
-training is [RESULT REQUIRED]). Full 9000-item POPE, Qwen-GPU path, and
-VCD/OPERA ports are [BASELINE RESULT REQUIRED].
+We reanalyze four saved POPE-derived runs, deduplicating identical image/claim
+pairs and checking conflicting labels/scores. The union has 67 claims from 34
+images. Different methods cover different subsets; the common comparison uses
+32 claims from 18 images (22 absent-object positives, 10 present-object
+negatives). Claims are parsed from benchmark questions, not original VLM
+answers. This task is \emph{object-phrase compatibility}, not the official
+generated-answer POPE evaluation. Previously inspected images and thresholds
+are development-exposed and cannot be retroactively labeled clean test data.
 
-\section{Results}
-Table~\ref{tab:main} is the headline: verifiers beat chance on every split;
-whole-image and grid signals agree (Fig.~\ref{fig:abl}); GBM confusion is
-diagonal (Fig.~\ref{fig:gbm}); VLM judge scores 16/17 (0.941). True/false
-control margin: 0.894 (So400M), 0.79 (SigLIP-base), 0.28 (B/32). Gallery over
-seven hallucination types: pairwise ranking 6/7.
+Analysis uses Python 3.11.7, NumPy 1.26.4, sklearn 1.6.1 and SciPy 1.17.1;
+the complete environment and source/data hashes accompany the artifacts.
+AUROC, average precision, F1 at 0.5, precision, recall, Brier and ten-bin ECE
+are computed from saved scores. Uncertainty uses 1,000 image-cluster bootstrap
+resamples (seed 42); paired randomization swaps complete image blocks. These
+small-sample exploratory tests are not preregistered confirmatory evidence.
 
-\textbf{v3 calibrated abstention (headline).} Same POPE items, same SigLIP
-model, three-state verdicts. Seeds 3/4 (n=30 each): v1 forced accuracy
-0.800/0.667; v3 coverage 0.67/0.47 with accuracy on decided claims
-\textbf{1.000/1.000}, abstaining on 10/16. v3 issued no wrong decisive verdict
-on these runs: abstention converts errors into review requests instead of
-hiding them. Bare-noun POPE claims make claim-vs-denial margins tiny (shared
-content words), so ties fall back to the base match when it is decisive.
-
-\begin{table}[htbp]
-\caption{Main results (real measurements; CIs in appendix runs). Bold = best.}
+\section{Results and Statistical Analysis}
+\begin{table}[t]
+\caption{Matched exploratory cohort: 32 claims, 18 images. All methods use the
+same cases. No full repair-system result is represented by these encoder rows.}
+\centering\resizebox{\columnwidth}{!}{\input{../results/audited/main_table.tex}}
 \label{tab:main}
-\centering
-\begin{tabular}{lccccc}
-\toprule
-Method & n & Acc & F1 & AUROC & s/img \\
-\midrule
-SigLIP whole & 67 & 0.90 & 0.905 & 0.933 & $\sim$1 \\
-CLIP-B/32 grid & 50 & 0.90 & 0.928 & \textbf{0.954} & $\sim$3 \\
-SigLIP grid & 32 & 0.66 & 0.667 & 0.941 & $\sim$3 \\
-Chance & -- & 0.50 & -- & 0.500 & -- \\
-GBM M0--M4$^*$ & 200 & \textbf{0.98} & \textbf{0.98} & -- & -- \\
-VLM judge$^\dagger$ & 17 & 0.941 & -- & -- & $\sim$3 \\
-\bottomrule
-\end{tabular}
-\\{\footnotesize $^*$synthetic taxonomy data. $^\dagger$live API, tiny-n.}
 \end{table}
+Table~\ref{tab:main} reports the matched comparison. CLIP-grid minus whole
+SigLIP accuracy is 0.03125, with image-cluster percentile interval
+$[0,0.0968]$ and paired cluster randomization $p=1.0$. Thus superiority is not
+established. SigLIP-grid's lower F1 illustrates that high ranking AUROC need
+not yield reliable thresholded decisions. Per-method availability cohorts
+remain in the audit but are not compared as matched ablations.
 
-\begin{figure}[htbp]
-\centerline{\includegraphics[width=0.48\textwidth]{figs/fig2_baseline.png}}
-\caption{Baseline vs verifiers: AUROC/F1 with sample sizes.}
-\label{fig:base}
+After deduplication, each archived v3 run contains 17 claims from ten images.
+v3 decides ten correctly and abstains on seven (coverage $10/17$). A simple
+baseline selecting the same number of most-extreme SigLIP scores also decides
+ten correctly. The previously advertised selective gain over forced answers
+does not demonstrate a benefit over matched-coverage selection.
+
+\begin{figure}[t]
+\centering\includegraphics[width=\columnwidth]{diagnosis_shift.pdf}
+\caption{Synthetic diagnosis stress test. The original GBM recovers its
+generator's labels but fails when fixed count patterns change while
+equality/mismatch relationships are retained. Not natural-data accuracy.}
+\label{fig:shift}
 \end{figure}
+The synthetic GBM reproduces holdout accuracy 0.980. On new seeds 11, 12 and
+13 of the same generator, accuracy is 0.989, 0.990 and 0.992. Replacing fixed
+counts with variable counts preserving equality/mismatch relationships reduces
+accuracy to 0.308, 0.319 and 0.301 (Fig.~\ref{fig:shift}). This controlled
+negative result suggests generator-specific shortcuts rather than a robust
+diagnosis model. It does not quantify performance on natural hallucinations.
 
-\begin{figure}[htbp]
-\centerline{\includegraphics[width=0.48\textwidth]{figs/fig3_gbm.png}}
-\caption{GBM M0--M4: confusion (test n=200) and per-class F1.}
-\label{fig:gbm}
+\section{Calibration and Selective Prediction}
+\begin{figure}[t]
+\centering\includegraphics[width=.49\columnwidth]{calibration_raw.pdf}\hfill
+\includegraphics[width=.49\columnwidth]{risk_coverage.pdf}
+\caption{Raw-score reliability and risk--coverage on the common exploratory
+cohort. Scores are not calibrated probabilities. Curves do not imply a formal
+risk guarantee or a threshold selected on an isolated calibration set.}
+\label{fig:cal}
 \end{figure}
+Matched-cohort ECE is 0.2585, 0.2966 and 0.3492 for whole SigLIP, CLIP-grid and
+SigLIP-grid. These scores should not be presented as calibrated probabilities.
+The supplied logistic calibration routine fits only an explicit calibration
+partition and rejects overlapping evaluation groups. Calibrated test results
+and formal high-confidence risk guarantees are \missing. Reliability and
+risk--coverage curves in Fig.~\ref{fig:cal} describe raw archived scores only.
 
-\begin{figure}[htbp]
-\centerline{\includegraphics[width=0.48\textwidth]{figs/fig4_ablation.png}}
-\caption{Ablation: region-max vs whole-image signal (same items).}
-\label{fig:abl}
-\end{figure}
+\section{Efficiency, Ablation, and Failure Analysis}
+Real API smoke traces now record prompts, returned model versions, tokens,
+service times and stage outcomes on one existing development image. One input
+is a generated answer; another is an author-edited derivative. These are
+functional smoke tests, not independently adjudicated repair experiments.
+Shared replay calls are separated from real network calls. Old aggregate
+timings mix downloads, loading and multiple methods; they cannot establish
+per-model latency or cost savings. GPU latency, peak RAM, API prices and cost
+per thousand examples remain \missing.
 
-\begin{figure}[htbp]
-\centerline{\includegraphics[width=0.48\textwidth]{figs/fig5_latency.png}}
-\caption{Left: measured CPU s/image per run. Right: fraction of POPE items
-resolvable by free CLIP at each decisiveness threshold.}
-\label{fig:lat}
-\end{figure}
+Full-component ablations, authentic external baselines, natural diagnosis
+accuracy, cross-model/dataset transfer and independently judged answer
+preservation are \missing. A queue of 67 legacy examples is supplied for
+blinded review; no fifty-case manual annotation claim is made. Failure classes
+include false positives/negatives, wrong routing, failed repair,
+overcorrection, verifier failure and visually ambiguous evidence.
 
-Error analysis (all from real runs): correct (``vibrant red'' 0.068),
-object (``blue elephant'' 0.932), counting (``2 dogs'' on 2 cats: detector 0
-dogs, MISMATCH), uncertainty (CLIP 0.41 vs VLM REFUTED $\rightarrow$ review),
-relation (``gold cat'': parts match, binding unproven --- known M4 gap).
+For future repair evaluation, report corrected hallucinated answers $F$,
+originally correct answers lost $B$, and utility $(F-B)/N$, alongside final
+answer correctness and hallucination reduction. Abstention is not counted in
+$F$; removal of a correct answer contributes to $B$. This prevents an
+abstain-everything policy from appearing to repair every error.
 
-Limitations: small-n bench; claims-from-questions (not full VLM-response eval
-at scale); Gemini API dependency/latency; detector errors; SigLIP semantic
-ambiguity; hard spatial relations; GBM trained on synthetic shapes; POPE
-single-object bias; CPU-only (no Qwen run). The architecture is demonstrated;
-large-scale validation is the next milestone.
+\section{Discussion, Limitations, and Ethics}
+Claim granularity can expose local failures, but decomposition and verifier
+errors propagate. Multiple channels may complement one another without being
+independent. A useful diagnosis must predict intervention outcomes beyond
+what a scalar detector or direct outcome policy predicts. That hypothesis
+remains unresolved. CPU-local models enable accessible deployment; API calls
+shift compute remotely and introduce cost, privacy and version dependence.
+
+Limitations include development reuse, small clustered cohorts, synthetic
+training, unvalidated causal categories, semantic/negation ambiguity, detector
+duplicate boxes, difficult OCR/relations, unknown pretraining contamination
+and missing independent repair labels. Dataset rights must be checked per
+source/image. Uploaded images should be sent remotely only with user consent.
+Human judges must remain distinct from the model used to approve repairs.
 
 \section{Conclusion}
-V-TRACE+ delivers claim-level verification, multi-signal fusion, M0--M4
-diagnosis, repair routing, and CPU-friendly inference with measured efficiency
-(cascade) and printed limits.
+V-TRACE+ currently demonstrates inspectable compatibility scoring and an
+executable diagnosis--route--repair--verify protocol, not validated superior
+mitigation. Matched-coverage analysis removes an earlier claimed selective
+advantage, and synthetic shift exposes diagnosis shortcuts. The next scientific
+milestone is a sealed, independently annotated preservation-and-cost comparison
+against fixed and outcome-based repair policies. Auditing these weaknesses is
+more informative than adding unvalidated model components.
 
-\section*{Evidence Audit}
-POPE tables/Figs.~2,4,5: \texttt{adaptive-vtrace/results/pope*.json} +
-\texttt{paper/gen\_figures.py} (recomputes everything). GBM/Fig.~3:
-\texttt{vtrace-plus/scripts/train\_gbm.py} (seed 42) + \texttt{tests/test\_gbm.py}.
-Margins: \texttt{scripts/run\_pipeline.py} logs (So400M 0.054/0.948 etc.).
-VLM 16/17: live Gemini session log. Routing/cascade frontiers: synthetic
-(\texttt{tests/test\_policy.py}, \texttt{test\_cascade.py}) --- real-data
-routing is [RESULT REQUIRED]. 87/87 tests green via per-repo pytest.
+\section*{Evidence and Reproduction}
+All paper numbers derive from \texttt{results/audited/report.json} and
+\texttt{synthetic\_gbm.json}; source hashes and input cohorts are recorded.
+\texttt{research.analyze}, \texttt{research.synthetic\_diagnosis} and
+\texttt{research.report\_assets} reproduce tables/figures. API traces are in
+\texttt{experiments/}; gold remains absent. Full numerical provenance and
+unsupported claims are documented in \texttt{claim\_audit.md}.
 
-\begin{thebibliography}{00}
-\bibitem{li2023pope} Y.~Li et al., ``Evaluating object hallucination in large
-vision-language models,'' in \textit{Proc.\ EMNLP}, 2023.
-\bibitem{leng2024vcd} S.~Leng et al., ``Mitigating object hallucinations via visual
-contrastive decoding,'' in \textit{Proc.\ CVPR}, 2024.
-\bibitem{favero2024m3id} L.~Favero et al., ``Multi-modal hallucination control by
-visual information grounding,'' in \textit{Proc.\ CVPR}, 2024.
-\bibitem{manakul2023selfcheckgpt} P.~Manakul et al., ``SelfCheckGPT: Zero-resource
-black-box hallucination detection,'' in \textit{Proc.\ EMNLP}, 2023.
-\bibitem{radford2021clip} A.~Radford et al., ``Learning transferable visual models
-from natural language supervision,'' in \textit{Proc.\ ICML}, 2021.
-\bibitem{zhai2023siglip} X.~Zhai et al., ``Sigmoid loss for language image
-pre-training,'' in \textit{Proc.\ ICCV}, 2023.
-\bibitem{minderer2022owlvit} M.~Minderer et al., ``Simple open-vocabulary object
-detection with vision transformers,'' in \textit{Proc.\ ECCV}, 2022.
-\bibitem{yin2023woodpecker} S.~Yin et al., ``Woodpecker: Hallucination correction
-for MLLMs,'' \textit{arXiv:2310.06554}, 2023.
-\bibitem{friedman2001gbm} J.~H.~Friedman, ``Greedy function approximation: a
-gradient boosting machine,'' \textit{Ann.\ Statist.}, vol.~29, no.~5, 2001.
-\bibitem{gunjal2024mhaldetect} A.~Gunjal et al., ``Detecting and preventing
-hallucinations in large vision language models,'' in \textit{Proc.\ AAAI}, 2024.
+\begin{thebibliography}{99}
+\bibitem{chair} A. Rohrbach et al., ``Object hallucination in image captioning,'' EMNLP, 2018.
+\bibitem{pope} Y. Li et al., ``Evaluating object hallucination in large vision-language models,'' EMNLP, 2023, arXiv:2305.10355.
+\bibitem{amber} J. Wang et al., ``AMBER: An LLM-free multi-dimensional benchmark for MLLMs hallucination evaluation,'' arXiv:2311.07397, 2023.
+\bibitem{hallusion} T. Guan et al., ``HallusionBench: An advanced diagnostic suite for entangled language hallucination and visual illusion in large vision-language models,'' CVPR, 2024.
+\bibitem{rlhf} Z. Sun et al., ``Aligning large multimodal models with factually augmented RLHF,'' arXiv:2309.14525, 2023.
+\bibitem{mhal} A. Gunjal, J. Yin, and E. Bas, ``Detecting and preventing hallucinations in large vision language models,'' AAAI, 2024.
+\bibitem{faith} L. Jing, R. Li, Y. Chen, and X. Du, ``FaithScore: Fine-grained evaluations of hallucinations in large vision-language models,'' Findings of EMNLP, 2024.
+\bibitem{wood} S. Yin et al., ``Woodpecker: Hallucination correction for multimodal large language models,'' Science China Information Sciences, 2024, arXiv:2310.16045.
+\bibitem{vcd} S. Leng et al., ``Mitigating object hallucinations in large vision-language models through visual contrastive decoding,'' CVPR, 2024.
+\bibitem{opera} Q. Huang et al., ``OPERA: Alleviating hallucination in multi-modal large language models via over-trust penalty and retrospection-allocation,'' CVPR, 2024.
+\bibitem{halc} Z. Chen et al., ``HALC: Object hallucination reduction via adaptive focal-contrast decoding,'' ICML, 2024.
+\bibitem{m3id} A. Favero et al., ``Multi-modal hallucination control by visual information grounding,'' CVPR, 2024, arXiv:2403.14003.
+\bibitem{selective} Y. Geifman and R. El-Yaniv, ``Selective classification for deep neural networks,'' arXiv:1705.08500, 2017.
+\bibitem{calibration} C. Guo et al., ``On calibration of modern neural networks,'' ICML, 2017.
+\bibitem{selfcheck} P. Manakul, A. Liusie, and M. J. F. Gales, ``SelfCheckGPT: Zero-resource black-box hallucination detection for generative large language models,'' EMNLP, 2023.
+\bibitem{route} I. Ong et al., ``RouteLLM: Learning to route LLMs with preference data,'' arXiv:2406.18665, 2024.
+\bibitem{visor} Y. Zhang, C. Zhan, and H. Wang, ``When visual signals mislead: A mechanistic study of attribute hallucination in vision-language models,'' arXiv:2608.11024, 2026.
+\bibitem{safe} M. Fazli et al., ``Does playing it safe count as faithfulness? Reassessing LVLM hallucination mitigation methods,'' arXiv:2609.01888, 2026.
 \end{thebibliography}
-
 \end{document}

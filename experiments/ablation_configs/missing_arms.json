@@ -1,0 +1,14 @@
+{
+  "status": "N/A until implemented and executed",
+  "arms": [
+    "authentic Woodpecker/VCD",
+    "natural-label learned router",
+    "no OWL",
+    "no SigLIP",
+    "LoRA ranks",
+    "SFT detector",
+    "DPO detector",
+    "cross-backbone",
+    "cross-dataset"
+  ]
+}

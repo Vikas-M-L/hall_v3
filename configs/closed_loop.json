@@ -1,0 +1,10 @@
+{
+  "status": "development",
+  "seed": 42,
+  "threshold": 0.5,
+  "model": "gemini-3.1-flash-lite",
+  "verifier_model": "gemini-3-flash-preview",
+  "max_calls": 10,
+  "timeout": 60,
+  "strategies": ["original", "detector_only", "uniform_self_correction", "detect_then_fixed", "type_routing", "random_router", "routed_no_verifier", "full", "no_diagnosis"]
+}
