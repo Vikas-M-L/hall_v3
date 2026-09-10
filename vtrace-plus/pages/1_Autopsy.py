@@ -109,9 +109,9 @@ from models.boxes import overlay
 det = c.get("detector_evidence") if run is not None else None
 if det and det.get("boxes"):
     st.image(overlay(image, det["boxes"], det.get("label", "candidate")),
-             caption="Stored detector candidates after duplicate suppression; not ground truth.", use_container_width=True)
+             caption="Stored detector candidates after duplicate suppression; not ground truth.", width="stretch")
 else:
-    st.image(image, caption="Original image. No detector bounding boxes stored for this claim.", use_container_width=True)
+    st.image(image, caption="Original image. No detector bounding boxes stored for this claim.", width="stretch")
 
 # 5 — repair
 st.subheader("Repair")

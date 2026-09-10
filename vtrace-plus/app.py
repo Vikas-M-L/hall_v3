@@ -86,7 +86,7 @@ cfg = {"question": question, "generate": backend.startswith("Gemini"), "api_deco
 image_bytes = up.getvalue() if up else None
 fingerprint = hashlib.sha256((image_bytes or b"") + json.dumps({"text": text, "cfg": cfg}, sort_keys=True).encode()).hexdigest()
 
-if st.button("Run verification", type="primary", use_container_width=True):
+if st.button("Run verification", type="primary", width="stretch"):
     if not image_bytes:
         st.error("Upload an image first.")
     elif hi <= lo:
@@ -207,7 +207,7 @@ if saved:
     table = pd.DataFrame([{"claim": r["claim_text"], "type": r["claim_type"], "risk": r["risk"],
                            "verdict": r["final_decision"]["verdict"], "diagnosis": r["diagnosis"]["name"],
                            "repair": r["diagnosis"]["repair"]} for r in claims])
-    st.dataframe(table, use_container_width=True)
+    st.dataframe(table, width="stretch")
     export = {**result, "correction": repair_saved["result"] if repair_saved and repair_saved["fingerprint"] == saved.get("fingerprint") else None}
     st.download_button("Download JSON", json.dumps(json_safe(export), indent=2, allow_nan=False), "results.json", "application/json")
     st.download_button("Download CSV", table.to_csv(index=False), "claims.csv", "text/csv")

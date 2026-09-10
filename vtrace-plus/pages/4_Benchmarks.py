@@ -43,12 +43,12 @@ for name, t in tables.items():
     df = pd.DataFrame([{"method": m, **{s: round(t[m][s]['auroc'], 3)
                                         for s in ("random", "popular", "adversarial", "all")}}
                        for m in methods])
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(df, width="stretch")
     df2 = pd.DataFrame([{"method": m, "F1": round(t[m]["all"]['f1'], 3),
                          "acc": round(t[m]["all"]['accuracy'], 3),
                          "auroc_ci95": str(t[m]["all"].get("auroc_ci95", ""))}
                         for m in methods])
-    st.dataframe(df2, use_container_width=True)
+    st.dataframe(df2, width="stretch")
     st.caption(meta.get("note", ""))
 
 st.subheader("Headline: v3 abstention vs v1 forced decisions (same items, same model)")
@@ -67,7 +67,7 @@ for name in ("pope_v3_s3.json", "pope_v3_s4.json"):
                         "v3 accuracy on decided": round(a["decisive_acc"], 3),
                         "v3 unresolved": a["n_unresolved"]})
 if rows_v3:
-    st.dataframe(pd.DataFrame(rows_v3), use_container_width=True)
+    st.dataframe(pd.DataFrame(rows_v3), width="stretch")
     st.caption("Historical, non-deduplicated summaries. Comparing selective accuracy "
                "to forced-answer accuracy alone does not establish superiority; "
                "the matched-coverage baseline ties v3 on these development cases.")

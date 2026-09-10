@@ -24,7 +24,7 @@ for sc in gallery:
                      f"{sc['title']}: {sc['blurb']}", expanded=False):
         c1, c2 = st.columns([5, 7])
         with c1:
-            st.image(str(L.REPO_ROOT / "assets" / sc["image"]), use_container_width=True)
+            st.image(str(L.REPO_ROOT / "assets" / sc["image"]), width="stretch")
         with c2:
             for r in sc["results"]:
                 vtext, vcls = L.verdict_of(r["risk"])

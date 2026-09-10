@@ -34,7 +34,7 @@ for tau in (0.3, 0.5, 0.6, 0.8):
     out.append({"decisiveness threshold": tau,
                 "resolved by CLIP": f"{sum(dec)}/{len(rows)}",
                 "eligible for early selection (hypothetical)": f"{100 * sum(dec) / len(rows):.0f}%"})
-st.dataframe(_pd.DataFrame(out), use_container_width=True)
+st.dataframe(_pd.DataFrame(out), width="stretch")
 st.info("An efficiency claim requires actual attempted calls, tokens, latency and "
         "independent answer-preservation outcomes at matched coverage. "
         "See research/protocol.md and the recorded research smoke traces.")
