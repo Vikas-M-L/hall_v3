@@ -15,8 +15,17 @@ from fusion.decision import PRESENTATION, json_safe
 
 st.set_page_config(page_title="V-TRACE+ Studio", page_icon="V", layout="wide")
 st.markdown(L.CSS, unsafe_allow_html=True)
-st.title("V-TRACE+ Studio")
-st.caption("Extract facts · gather evidence · identify conflicts · propose and recheck corrections")
+st.markdown("<div class='hero-title'>V-TRACE<span class='grad'>+ Studio</span></div>",
+            unsafe_allow_html=True)
+st.markdown("<div class='hero-sub'>Extract facts · gather evidence · identify conflicts · "
+            "propose and recheck corrections</div>", unsafe_allow_html=True)
+st.markdown("<div class='step-pills'>"
+            "<span class='step-pill hot'>1 · IMAGE</span>"
+            "<span class='step-pill hot'>2 · CLAIMS</span>"
+            "<span class='step-pill hot'>3 · VERIFY</span>"
+            "<span class='step-pill hot'>4 · FUSE</span>"
+            "<span class='step-pill hot'>5 · JSON</span>"
+            "</div>", unsafe_allow_html=True)
 
 
 @st.cache_resource(show_spinner="Loading image verifier…", max_entries=2)
