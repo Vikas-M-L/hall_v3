@@ -28,6 +28,16 @@ Each deduplicated v3 run decides 10/17 correctly; a confidence-only baseline
 matches it at the same coverage. Thus **no v3 advantage is established**.
 The offline GBM's 98% synthetic holdout accuracy drops to 30.1–31.9% under a
 controlled count-pattern shift. These negative results remain visible.
+An extended fifth POPE run grows the deduplicated pool to **88 unique claims**:
+whole-image SigLIP AUROC 0.926/F1 0.906 (n=88), CLIP-B/32 grid 0.942/0.932
+(n=71) — stability confirmation, not a new best-result claim.
+
+## Human annotation (the blocking step)
+
+`research/annotation_kit/` holds the annotator guidelines, the CSV template,
+and `research/annotation_csv.py` (CSV → adjudicated JSONL converter). Two
+annotators label independently; disagreements go to adjudicator C. Nothing is
+annotated yet — this kit is the prerequisite for every publication gate.
 
 ## Layout
 
